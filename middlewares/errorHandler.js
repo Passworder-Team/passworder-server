@@ -7,35 +7,36 @@ module.exports = (err, req, res, next) => {
       messages.push(error.errors[i].message);
     }
     res.status(400).json({
-      err: messages
+      msg: messages
     });
   } else if (error.name === "transactionError") {
     res.status(400).json({
-      err: error.message
+      msg: error.message
     });
-  } else if (error.name === "loginError") {
+  } else if (error.name === "invalid email/password") {
     res.status(400).json({
-      err: "email / password is wrong"
+      name: error.name,
+      msg: "Email / Password is wrong"
     });
   } else if (error.name === "dataNotFound") {
     res.status(404).json({
-      err: "Cannot find Data"
+      msg: "Cannot find Data"
     });
   } else if (error.name === "NotAuthorized") {
     res.status(401).json({
-      err: error.message
+      msg: error.message
     });
   } else if (error.name === "SequelizeDatabaseError") {
     res.status(500).json({
-      err: "Internal Server Error"
+      msg: "Internal Server Error"
     });
   } else if (error.name === "JsonWebTokenError") {
     res.status(401).json({
-      err: error.message
+      msg: error.message
     });
   } else {
     res.status(500).json({
-      err: "Internal Server Error"
+      msg: "Internal Server Error"
     });
   }
 };
