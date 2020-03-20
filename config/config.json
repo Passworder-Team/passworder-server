@@ -1,0 +1,21 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "postgres",
+    "database": "Passworder",
+    "host": "localhost",
+    "dialect": "postgres",
+    "operatorsAliases": 0
+  },
+  "test": {
+    "username": "postgres",
+    "password": "postgres",
+    "database": "Passworder_test",
+    "host": "localhost",
+    "dialect": "postgres",
+    "operatorsAliases": 0
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL"
+  }
+}
