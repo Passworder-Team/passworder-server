@@ -6,7 +6,7 @@ const errorHandler = require("../middlewares/errorHandler");
 
 router.use("/auth", userRouter);
 router.use(auth);
-router.use(passwordRouter);
+router.use("/passwords", passwordRouter);
 router.use(errorHandler);
 
 module.exports = router;
