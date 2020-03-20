@@ -4,16 +4,16 @@ module.exports = (sequelize, DataTypes) => {
   class User extends sequelize.Sequelize.Model {}
   User.init(
     {
-      userName: {
+      name: {
         type: DataTypes.STRING,
         validate: {
           len: {
             args: [3],
-            msg: "user name min 3 characters"
+            msg: "User name min 3 characters"
           },
           notEmpty: {
             args: true,
-            msg: "user name cannot empty"
+            msg: "User name cannot empty"
           },
           isUnique: (value, next) => {
             sequelize.models.User.findOne({
@@ -37,11 +37,11 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: "email cannot empty"
+            msg: "Email can\'t be empty"
           },
           isEmail: {
             args: true,
-            msg: "format email is wrong"
+            msg: "Email format is wrong"
           },
           isUnique: (value, next) => {
             sequelize.models.User.findOne({
@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
             })
               .then(costumer => {
                 if (costumer) {
-                  next("email is already used");
+                  next("Email is already used");
                 } else {
                   next();
                 }
