@@ -1,0 +1,31 @@
+{
+  "name": "passworder-server",
+  "version": "1.0.0",
+  "description": "Server side of passworder app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "NODE_ENV=development nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Passworder-Team/passworder-server.git"
+  },
+  "author": "passworder-team",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Passworder-Team/passworder-server/issues"
+  },
+  "homepage": "https://github.com/Passworder-Team/passworder-server#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jest": "^25.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^7.18.2",
+    "sequelize": "^5.21.5",
+    "supertest": "^4.0.2"
+  }
+}
