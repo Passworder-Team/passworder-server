@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class User extends sequelize.Sequelize.Model {}
   User.init(
     {
-      userName: {
+      name: {
         type: DataTypes.STRING,
         validate: {
           len: {
