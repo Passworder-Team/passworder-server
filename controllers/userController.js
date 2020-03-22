@@ -16,14 +16,19 @@ class UserController {
           email: user.email
         };
         const token = createToken(toToken);
-        res.status(201).json(token);
+        res.status(201).json({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          token,
+          msg: "Register success"
+        });
       })
       .catch(next);
   }
   static login(req, res, next) {
     User.findOne({
       where: {
-        name: req.body.name,
         email: req.body.email
       }
     })
@@ -36,17 +41,23 @@ class UserController {
               email: user.email
             };
             const token = createToken(toToken);
-            res.status(200).json(token);
+            res.status(200).json({
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              token,
+              msg: "Login success"
+            });
           } else {
             const error = {
-              name: "loginError",
+              name: "invalid email/password",
               message: "email / password is wrong"
             };
             next(error);
           }
         } else {
           const error = {
-            name: "loginError",
+            name: "invalid email/password",
             message: "email / password is wrong"
           };
           next(error);
