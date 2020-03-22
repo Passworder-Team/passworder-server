@@ -21,7 +21,7 @@ class UserController {
           name: user.name,
           email: user.email,
           token,
-          msg: "Login success"
+          msg: "Register success"
         });
       })
       .catch(next);
@@ -29,7 +29,6 @@ class UserController {
   static login(req, res, next) {
     User.findOne({
       where: {
-        name: req.body.name,
         email: req.body.email
       }
     })
