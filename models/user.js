@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
           },
           notEmpty: {
             args: true,
-            msg: "User name cannot empty"
+            msg: "User name cannot be empty"
           },
           isUnique: (value, next) => {
             sequelize.models.User.findOne({
@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: {
             args: true,
-            msg: "Email can\'t be empty"
+            msg: "Email cannot be empty"
           },
           isEmail: {
             args: true,
@@ -60,7 +60,19 @@ module.exports = (sequelize, DataTypes) => {
           }
         }
       },
-      password: DataTypes.STRING
+      password: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "Password cannot be empty or null"
+          },
+          len: {
+            args: [6],
+            msg: "Password is too short. Minimum password length is 6"
+          }
+        }
+      }
     },
     {
       sequelize,

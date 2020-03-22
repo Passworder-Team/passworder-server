@@ -72,9 +72,9 @@ describe("User Routes", () => {
           password: "mantapjiwa"
         })
         .end((err, response) => {
-          // console.log('ini response',response.body)
+          // console.log("ini response", response.body);
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "Email cannot be empty");
+          expect(response.body.msg).toContain("Email cannot be empty");
           expect(response.status).toBe(400);
           done();
         });
@@ -91,7 +91,7 @@ describe("User Routes", () => {
         .end((err, response) => {
           // console.log('ini response',response.body)
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "Email format is wrong");
+          expect(response.body.msg).toContain("Email format is wrong");
           expect(response.status).toBe(400);
           done();
         });
@@ -108,7 +108,7 @@ describe("User Routes", () => {
         .end((err, response) => {
           // console.log('ini response',response.body)
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "Email is already used");
+          expect(response.body.msg).toContain("Email is already used");
           expect(response.status).toBe(400);
           done();
         });
@@ -120,13 +120,12 @@ describe("User Routes", () => {
         .send({
           name: "nafies",
           email: "nafies1@nafies.tech",
-          password: null
+          password: ""
         })
         .end((err, response) => {
           // console.log('ini response',response.body)
           expect(err).toBe(null);
-          expect(response.body.errors[0]).toHaveProperty(
-            "msg",
+          expect(response.body.msg).toContain(
             "Password cannot be empty or null"
           );
           expect(response.status).toBe(400);
@@ -145,10 +144,7 @@ describe("User Routes", () => {
         .end((err, response) => {
           // console.log('ini response',response.body)
           expect(err).toBe(null);
-          expect(response.body.errors[0]).toHaveProperty(
-            "msg",
-            "User name can't be empty"
-          );
+          expect(response.body.msg).toContain("User name cannot be empty");
           expect(response.status).toBe(400);
           done();
         });
@@ -165,10 +161,7 @@ describe("User Routes", () => {
         .end((err, response) => {
           // console.log('ini response',response.body)
           expect(err).toBe(null);
-          expect(response.body.errors[0]).toHaveProperty(
-            "msg",
-            "User name min 3 characters"
-          );
+          expect(response.body.msg).toContain("User name min 3 characters");
           expect(response.status).toBe(400);
           done();
         });
@@ -185,8 +178,7 @@ describe("User Routes", () => {
         .end((err, response) => {
           // console.log('ini response',response.body)
           expect(err).toBe(null);
-          expect(response.body.errors[0]).toHaveProperty(
-            "msg",
+          expect(response.body.msg).toContain(
             "Password is too short. Minimum password length is 6"
           );
           expect(response.status).toBe(400);

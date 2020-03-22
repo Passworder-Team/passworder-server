@@ -1,6 +1,6 @@
 module.exports = (err, req, res, next) => {
   const error = err;
-  //   console.log(error, "errrrrroooooooooor");
+  // console.log(error.stack);
   if (error.name === "SequelizeValidationError") {
     const messages = [];
     for (let i = 0; i < error.errors.length; i++) {
@@ -32,7 +32,7 @@ module.exports = (err, req, res, next) => {
     });
   } else if (error.name === "JsonWebTokenError") {
     res.status(401).json({
-      msg: error.message
+      msg: "You must login first"
     });
   } else {
     res.status(500).json({
