@@ -32,18 +32,16 @@ describe("User Routes", () => {
         })
         .end((err, response) => {
           // console.log('ini response',response.body)
-          expect(err).toBe(null);
-          expect(response.body).toHaveProperty(
-            "email",
-            "nafies.beta2@gmail.com"
-          );
-          expect(response.body).toHaveProperty("name", "nafies");
-          expect(response.body).toHaveProperty("id", expect.any(Number));
-          expect(response.body).toHaveProperty("msg", "Register success");
-          expect(response.status).toBe(201);
-          done();
-        });
-    });
+          expect(err).toBe(null)
+          expect(response.body).toHaveProperty('email', 'nafies.beta2@gmail.com')
+          expect(response.body).toHaveProperty('name', 'nafies')
+          expect(response.body).toHaveProperty('id', expect.any(Number))
+          expect(response.body).toHaveProperty('token', expect.any(String))
+          expect(response.body).toHaveProperty('msg', 'Register success')
+          expect(response.status).toBe(201)
+          done()
+        })
+    })
 
     /*
     test('it should return error email is not valid and status 400', (done) => {
@@ -213,18 +211,16 @@ describe("User Routes", () => {
         })
         .end((err, response) => {
           // console.log('ini response',response.body)
-          expect(err).toBe(null);
-          expect(response.body).toHaveProperty(
-            "email",
-            "nafies.beta2@gmail.com"
-          );
-          expect(response.body).toHaveProperty("name", "nafies");
-          expect(response.body).toHaveProperty("id", expect.any(Number));
-          expect(response.body).toHaveProperty("msg", "Login success");
-          expect(response.status).toBe(200);
-          done();
-        });
-    });
+          expect(err).toBe(null)
+          expect(response.body).toHaveProperty('email', 'nafies.beta2@gmail.com')
+          expect(response.body).toHaveProperty('name', 'nafies')
+          expect(response.body).toHaveProperty('id', expect.any(Number))
+          expect(response.body).toHaveProperty('token', expect.any(String))
+          expect(response.body).toHaveProperty('msg', 'Login success')
+          expect(response.status).toBe(200)
+          done()
+        })
+    })
 
     test("it should return error username/password is wrong, and status 400", done => {
       request(app)
