@@ -385,7 +385,7 @@ describe("Password Routes", () => {
         })
         .catch(err => done(err));
     });
-    test("it should return succes update with status 200", done => {
+    test("it should return success update with status 200", done => {
       request(app)
         .put(`/passwords/${PasswordId}`)
         .send({
@@ -396,6 +396,10 @@ describe("Password Routes", () => {
         .set("token", testToken)
         .end((err, response) => {
           expect(err).toBe(null);
+          expect(response.body).toHaveProperty(
+            "msg",
+            "Update password success"
+          );
           expect(response.status).toBe(200);
           done();
         });
