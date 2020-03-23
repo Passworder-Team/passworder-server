@@ -7,7 +7,8 @@ class UserController {
     const newUser = {
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password,
+      phoneNumber: req.body.phoneNumber
     };
     User.create(newUser)
       .then(user => {
@@ -19,7 +20,8 @@ class UserController {
           user: {
             id: user.id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            phoneNumber: req.body.phoneNumber
           },
           token,
           msg: "Register success"
@@ -46,6 +48,7 @@ class UserController {
                 id: user.id,
                 name: user.name,
                 email: user.email,
+                phoneNumber: user.phoneNumber
               },
               token,
               msg: "Login success"

@@ -19,9 +19,10 @@ class PasswordController {
             id: password.id,
             account: password.account,
             email: password.email,
-            UserId: password.UserId,
+            password: password.password,
+            UserId: password.UserId
           },
-          msg: "Succesfully input new password"
+          msg: "Succesfuly input new password"
         };
         res.status(201).json(data);
       })
@@ -41,9 +42,9 @@ class PasswordController {
               id: password.id,
               account: password.account,
               email: password.email,
-              UserId: password.UserId,
-            }
-          })
+              UserId: password.UserId
+            };
+          });
           res.status(200).json(newPasswords);
         } else {
           const err = {
@@ -121,7 +122,11 @@ class PasswordController {
             name: "dataNotFound"
           };
           next(err);
-        } else res.status(200).json(password);
+        } else {
+          res.status(200).json({
+            msg: "Update password success"
+          });
+        }
       })
       .catch(next);
   }
@@ -156,7 +161,11 @@ class PasswordController {
             name: "dataNotFound"
           };
           next(err);
-        } else res.status(200).json(password);
+        } else {
+          res.status(200).json({
+            msg: "Delete password success"
+          });
+        }
       })
       .catch(next);
   }

@@ -10,6 +10,7 @@ Manage logged in user data:
 - `GET /passwords`
 - `GET /passwords/:id`
 - `POST /passwords`
+- `PUT /passwords/:id`
 - `DELETE /passwords/:id`
 
 Error response format:
@@ -41,7 +42,8 @@ Status: `4xx` or `5xx`
       "user": {
         "id": "...",
         "name": "...",
-        "email": "..."
+        "email": "...",
+        "phoneNumber": "...
       },
       "token": "..."
     }
@@ -63,7 +65,8 @@ Status: `4xx` or `5xx`
       "user": {
         "id": "...",
         "name": "...",
-        "email": "..."
+        "email": "...",
+        "phoneNumber": "..."
       },
       "token": "..."
     }
@@ -132,6 +135,25 @@ Status: `4xx` or `5xx`
         "UserId": "..."
       },
       "msg": "Succesfully input new password"
+    }
+    ```
+
+### PUT /passwords/:id
+
+- Request Header(s):
+  - `access_token`: `<token>`  
+    _replace `<token>` with your actual token from `POST /auth/login` response_
+  - `Content-Type`: `application/x-www-form-urlencoded` or `application/json`
+- Request Body:
+  - `account`: `String (required)`
+  - `email`: `String (required)`
+  - `password`: `String (required)`
+- Response:
+  - `status`: `200`
+  - `body`:
+    ```json
+    {
+      "msg": "Update password succes"
     }
     ```
 
