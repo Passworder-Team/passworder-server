@@ -1,17 +1,22 @@
 # passworder-server
 
-List of available endpoints:
+List of available endpoints:  
+
+**Auth**
 
 - `POST /auth/register`
 - `POST /auth/login`
 
-Manage logged in user data:
-
+**Password**
 - `GET /passwords`
 - `GET /passwords/:id`
 - `POST /passwords`
 - `PUT /passwords/:id`
 - `DELETE /passwords/:id`
+
+**OTP**
+- `GET /otp/:passId`
+- `POST /otp`
 
 Error response format:
 
@@ -20,6 +25,12 @@ Status: `4xx` or `5xx`
 ```json
 {
   "errors": ["...", "..."]
+}
+```
+or
+```json
+{
+  "msg": "..."
 }
 ```
 
@@ -43,7 +54,7 @@ Status: `4xx` or `5xx`
         "id": "...",
         "name": "...",
         "email": "...",
-        "phoneNumber": "...
+        "phoneNumber": "..."
       },
       "token": "..."
     }
@@ -77,7 +88,7 @@ Status: `4xx` or `5xx`
 ### GET /passwords
 
 - Request Header(s):
-  - `access_token`: `<token>`  
+  - `token`: `<token>`  
     _replace `<token>` with your actual token from `POST /auth/login` response_
 - Response:
   - `status`: `200`
@@ -96,7 +107,7 @@ Status: `4xx` or `5xx`
 ### GET /passwords/:id
 
 - Request Header(s):
-  - `access_token`: `<token>`  
+  - `token`: `<token>`  
     _replace `<token>` with your actual token from `POST /auth/login` response_
 - Request Param(s):..
   - `id`: `String`
@@ -116,7 +127,7 @@ Status: `4xx` or `5xx`
 ### POST /passwords
 
 - Request Header(s):
-  - `access_token`: `<token>`  
+  - `token`: `<token>`  
     _replace `<token>` with your actual token from `POST /auth/login` response_
   - `Content-Type`: `application/x-www-form-urlencoded` or `application/json`
 - Request Body:
@@ -141,7 +152,7 @@ Status: `4xx` or `5xx`
 ### PUT /passwords/:id
 
 - Request Header(s):
-  - `access_token`: `<token>`  
+  - `token`: `<token>`  
     _replace `<token>` with your actual token from `POST /auth/login` response_
   - `Content-Type`: `application/x-www-form-urlencoded` or `application/json`
 - Request Body:
@@ -153,14 +164,14 @@ Status: `4xx` or `5xx`
   - `body`:
     ```json
     {
-      "msg": "Update password succes"
+      "msg": "Update password success"
     }
     ```
 
 ### DELETE /passwords/:id
 
 - Request Header(s):
-  - `access_token`: `<token>`  
+  - `token`: `<token>`  
     _replace `<token>` with your actual token from `POST /auth/login` response_
 - Request Param(s):
   - `id`: `String`
@@ -170,5 +181,44 @@ Status: `4xx` or `5xx`
     ```json
     {
       "msg": "Delete password success"
+    }
+    ```
+
+## OTP
+
+### GET /otp/:passId
+
+- Request Header(s):
+  - `token`: `<token>`  
+    _replace `<token>` with your actual token from `POST /auth/login` response_
+- Request Param(s):
+  - `passId`: `String`  
+    _Password Id from `GET /passwords/:id` response_
+- Response:
+  - `status`: `200`
+  - `body`:
+    ```json
+    {
+        "msg": "Send OTP success. Please check Your phone and input otp number.",
+        "result": "MessageID is ..."
+      }
+    ```
+
+### POST /otp
+
+- Request Header(s):
+  - `token`: `<token>`  
+    _replace `<token>` with your actual token from `POST /auth/login` response_
+  - `Content-Type`: `application/x-www-form-urlencoded` or `application/json`
+- Request Body:
+  - `otp`: `String (required)`
+  - `passId`: `String (required)`
+- Response:
+  - `status`: `200`
+  - `body`:
+    ```json
+    {
+      "msg": "success, Otp matched",
+      "secret": "..."
     }
     ```

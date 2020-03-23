@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit",
+    "test1": "NODE_ENV=test jest --runInBand --detectOpenHandles --coverage --forceExit",
     "dev": "NODE_ENV=development nodemon ./bin/http.js"
   },
   "repository": {
