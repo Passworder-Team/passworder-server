@@ -41,7 +41,8 @@ Status: `4xx` or `5xx`
       "user": {
         "id": "...",
         "name": "...",
-        "email": "..."
+        "email": "...",
+        "phoneNumber": "...
       },
       "token": "..."
     }
@@ -63,7 +64,8 @@ Status: `4xx` or `5xx`
       "user": {
         "id": "...",
         "name": "...",
-        "email": "..."
+        "email": "...",
+        "phoneNumber": "..."
       },
       "token": "..."
     }

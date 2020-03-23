@@ -10,7 +10,8 @@ describe("User Routes", () => {
       User.create({
         name: "nafies",
         email: "nafies.beta1@gmail.com",
-        password: "mantapjiwa"
+        password: "mantapjiwa",
+        phoneNumber: "08123456789"
       })
         .then(_ => done())
         .catch(err => done(err));
@@ -28,20 +29,28 @@ describe("User Routes", () => {
         .send({
           name: "nafies",
           email: "nafies.beta2@gmail.com",
-          password: "mantapjiwa"
+          password: "mantapjiwa",
+          phoneNumber: "08123456789"
         })
         .end((err, response) => {
           // console.log('ini response',response.body)
-          expect(err).toBe(null)
-          expect(response.body).toHaveProperty('email', 'nafies.beta2@gmail.com')
-          expect(response.body).toHaveProperty('name', 'nafies')
-          expect(response.body).toHaveProperty('id', expect.any(Number))
-          expect(response.body).toHaveProperty('token', expect.any(String))
-          expect(response.body).toHaveProperty('msg', 'Register success')
-          expect(response.status).toBe(201)
-          done()
-        })
-    })
+          expect(err).toBe(null);
+          expect(response.body.user).toHaveProperty(
+            "email",
+            "nafies.beta2@gmail.com"
+          );
+          expect(response.body.user).toHaveProperty("name", "nafies");
+          expect(response.body.user).toHaveProperty("id", expect.any(Number));
+          expect(response.body.user).toHaveProperty(
+            "phoneNumber",
+            "08123456789"
+          );
+          expect(response.body).toHaveProperty("token", expect.any(String));
+          expect(response.body).toHaveProperty("msg", "Register success");
+          expect(response.status).toBe(201);
+          done();
+        });
+    });
 
     /*
     test('it should return error email is not valid and status 400', (done) => {
@@ -67,6 +76,7 @@ describe("User Routes", () => {
         .send({
           name: "nafies",
           email: "",
+          phoneNumber: "08123456789",
           password: "mantapjiwa"
         })
         .end((err, response) => {
@@ -84,7 +94,8 @@ describe("User Routes", () => {
         .send({
           name: "nafies",
           email: "email",
-          password: "mantapjiwa"
+          password: "mantapjiwa",
+          phoneNumber: "08123456789"
         })
         .end((err, response) => {
           // console.log('ini response',response.body)
@@ -101,7 +112,8 @@ describe("User Routes", () => {
         .send({
           name: "nafies",
           email: "nafies.beta1@gmail.com",
-          password: "mantapjiwa"
+          password: "mantapjiwa",
+          phoneNumber: "08123456789"
         })
         .end((err, response) => {
           // console.log('ini response',response.body)
@@ -118,7 +130,8 @@ describe("User Routes", () => {
         .send({
           name: "nafies",
           email: "nafies1@nafies.tech",
-          password: ""
+          password: "",
+          phoneNumber: "08123456789"
         })
         .end((err, response) => {
           // console.log('ini response',response.body)
@@ -137,7 +150,8 @@ describe("User Routes", () => {
         .send({
           name: "",
           email: "nafies1@nafies.tech",
-          password: "mantapjiwa"
+          password: "mantapjiwa",
+          phoneNumber: "08123456789"
         })
         .end((err, response) => {
           // console.log('ini response',response.body)
@@ -154,7 +168,8 @@ describe("User Routes", () => {
         .send({
           name: "na",
           email: "nafies1@nafies.tech",
-          password: "mantapjiwa"
+          password: "mantapjiwa",
+          phoneNumber: "08123456789"
         })
         .end((err, response) => {
           // console.log('ini response',response.body)
@@ -171,13 +186,52 @@ describe("User Routes", () => {
         .send({
           name: "nafies",
           email: "nafies1@nafies.tech",
-          password: "man"
+          password: "man",
+          phoneNumber: "08123456789"
         })
         .end((err, response) => {
           // console.log('ini response',response.body)
           expect(err).toBe(null);
           expect(response.body.msg).toContain(
             "Password is too short. Minimum password length is 6"
+          );
+          expect(response.status).toBe(400);
+          done();
+        });
+    });
+    test("it should return error phone number is too short and status 400", done => {
+      request(app)
+        .post("/auth/register")
+        .send({
+          name: "nafies",
+          email: "nafies1@nafies.tech",
+          password: "mantapJiwa",
+          phoneNumber: "08123456"
+        })
+        .end((err, response) => {
+          // console.log('ini response',response.body)
+          expect(err).toBe(null);
+          expect(response.body.msg).toContain(
+            "Phone number is too short. Minimum phone number length is 10"
+          );
+          expect(response.status).toBe(400);
+          done();
+        });
+    });
+    test("it should return error phone number is empty and status 400", done => {
+      request(app)
+        .post("/auth/register")
+        .send({
+          name: "nafies",
+          email: "nafies1@nafies.tech",
+          password: "mantapJiwa",
+          phoneNumber: ""
+        })
+        .end((err, response) => {
+          // console.log('ini response',response.body)
+          expect(err).toBe(null);
+          expect(response.body.msg).toContain(
+            "Phone number cannot be empty or null"
           );
           expect(response.status).toBe(400);
           done();
@@ -190,7 +244,8 @@ describe("User Routes", () => {
       User.create({
         name: "nafies",
         email: "nafies.beta2@gmail.com",
-        password: "mantapjiwa"
+        password: "mantapjiwa",
+        phoneNumber: "08123456789"
       })
         .then(_ => done())
         .catch(err => done(err));
@@ -211,16 +266,23 @@ describe("User Routes", () => {
         })
         .end((err, response) => {
           // console.log('ini response',response.body)
-          expect(err).toBe(null)
-          expect(response.body).toHaveProperty('email', 'nafies.beta2@gmail.com')
-          expect(response.body).toHaveProperty('name', 'nafies')
-          expect(response.body).toHaveProperty('id', expect.any(Number))
-          expect(response.body).toHaveProperty('token', expect.any(String))
-          expect(response.body).toHaveProperty('msg', 'Login success')
-          expect(response.status).toBe(200)
-          done()
-        })
-    })
+          expect(err).toBe(null);
+          expect(response.body.user).toHaveProperty(
+            "email",
+            "nafies.beta2@gmail.com"
+          );
+          expect(response.body.user).toHaveProperty("name", "nafies");
+          expect(response.body.user).toHaveProperty("id", expect.any(Number));
+          expect(response.body.user).toHaveProperty(
+            "phoneNumber",
+            "08123456789"
+          );
+          expect(response.body).toHaveProperty("token", expect.any(String));
+          expect(response.body).toHaveProperty("msg", "Login success");
+          expect(response.status).toBe(200);
+          done();
+        });
+    });
 
     test("it should return error username/password is wrong, and status 400", done => {
       request(app)

@@ -50,10 +50,13 @@ describe("Password Routes", () => {
         .end((err, response) => {
           //   console.log("ini response", response.body);
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("id", expect.any(Number));
-          expect(response.body).toHaveProperty("account", "Hacktiv8");
-          expect(response.body).toHaveProperty("email", "admin@admin.com");
-          expect(response.body).toHaveProperty("password", "admin123");
+          expect(response.body.data).toHaveProperty("id", expect.any(Number));
+          expect(response.body.data).toHaveProperty("account", "Hacktiv8");
+          expect(response.body.data).toHaveProperty("email", "admin@admin.com");
+          expect(response.body.data).toHaveProperty(
+            "password",
+            expect.any(String)
+          );
           expect(response.body).toHaveProperty(
             "msg",
             "Succesfuly input new password"
@@ -62,7 +65,7 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test("it should return error 'Account can\'t be empty' and status 400", done => {
+    test("it should return error 'Account can't be empty' and status 400", done => {
       request(app)
         .post("/passwords")
         .set("token", testToken)
@@ -75,12 +78,12 @@ describe("Password Routes", () => {
         .end((err, response) => {
           // console.log("ini response", response.body);
           expect(err).toBe(null);
-          expect(response.body.msg).toContain("Account can\'t be empty");
+          expect(response.body.msg).toContain("Account can't be empty");
           expect(response.status).toBe(400);
           done();
         });
     });
-    test("it should return error 'Email can\'t be empty' and status 400", done => {
+    test("it should return error 'Email can't be empty' and status 400", done => {
       request(app)
         .post("/passwords")
         .set("token", testToken)
@@ -93,7 +96,7 @@ describe("Password Routes", () => {
         .end((err, response) => {
           // console.log("ini response", response.body);
           expect(err).toBe(null);
-          expect(response.body.msg).toContain("Email can\'t be empty");
+          expect(response.body.msg).toContain("Email can't be empty");
           expect(response.status).toBe(400);
           done();
         });
@@ -134,7 +137,7 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test("it should return error 'Password can\'t be empty' and status 400", done => {
+    test("it should return error 'Password can't be empty' and status 400", done => {
       request(app)
         .post("/passwords")
         .set("token", testToken)
@@ -147,7 +150,7 @@ describe("Password Routes", () => {
         .end((err, response) => {
           // console.log("ini response", response.body);
           expect(err).toBe(null);
-          expect(response.body.msg).toContain("Password can\'t be empty");
+          expect(response.body.msg).toContain("Password can't be empty");
           expect(response.status).toBe(400);
           done();
         });
@@ -202,7 +205,6 @@ describe("Password Routes", () => {
           expect(err).toBe(null);
           expect(response.body[0]).toHaveProperty("account", "Hacktiv8");
           expect(response.body[0]).toHaveProperty("email", "admin@admin.com");
-          expect(response.body[0]).toHaveProperty("password", "admin123");
           expect(response.body[0]).toHaveProperty("UserId", UserId);
           expect(response.status).toBe(200);
           queryInterface
@@ -213,13 +215,13 @@ describe("Password Routes", () => {
             .catch(err => done(err));
         });
     });
-    test("it should return error 'can\'t be find Data', with status 404", done => {
+    test("it should return error 'Can't find Data', with status 404", done => {
       request(app)
         .get("/passwords")
         .set("token", testToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "can\'t be find Data");
+          expect(response.body).toHaveProperty("msg", "Can't find Data");
           expect(response.status).toBe(404);
           done();
         });
@@ -275,7 +277,7 @@ describe("Password Routes", () => {
           expect(err).toBe(null);
           expect(response.body).toHaveProperty("account", "Hacktiv8");
           expect(response.body).toHaveProperty("email", "admin@admin.com");
-          expect(response.body).toHaveProperty("password", "admin123");
+          expect(response.body).toHaveProperty("password", expect.any(String));
           expect(response.body).toHaveProperty("UserId", UserId);
           expect(response.status).toBe(200);
           queryInterface
@@ -286,13 +288,13 @@ describe("Password Routes", () => {
             .catch(err => done(err));
         });
     });
-    test("it should return error 'can\'t be find Data', with status 404", done => {
+    test("it should return error 'Can't find Data', with status 404", done => {
       request(app)
         .get(`/passwords/${PasswordId}`)
         .set("token", testToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "can\'t be find Data");
+          expect(response.body).toHaveProperty("msg", "Can't find Data");
           expect(response.status).toBe(404);
           done();
         });
@@ -398,7 +400,7 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test('it should return error "can\'t be find data"', done => {
+    test("it should return error 'Can't find data'", done => {
       request(app)
         .put(`/passwords/${PasswordId + 1}`)
         .send({
@@ -409,12 +411,12 @@ describe("Password Routes", () => {
         .set("token", testToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "can\'t be find Data");
+          expect(response.body).toHaveProperty("msg", "Can't find Data");
           expect(response.status).toBe(404);
           done();
         });
     });
-    test('it should return error validation "Account can\'t be empty"', done => {
+    test("it should return error validation 'Account can't be empty'", done => {
       request(app)
         .put(`/passwords/${PasswordId}`)
         .set("token", testToken)
@@ -425,12 +427,12 @@ describe("Password Routes", () => {
         })
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body.msg).toContain("Account can\'t be empty");
+          expect(response.body.msg).toContain("Account can't be empty");
           expect(response.status).toBe(400);
           done();
         });
     });
-    test('it should return error validation "Email can\'t be empty"', done => {
+    test("it should return error validation 'Email can't be empty'", done => {
       request(app)
         .put(`/passwords/${PasswordId}`)
         .set("token", testToken)
@@ -441,7 +443,7 @@ describe("Password Routes", () => {
         })
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body.msg).toContain("Email can\'t be empty");
+          expect(response.body.msg).toContain("Email can't be empty");
           expect(response.status).toBe(400);
           done();
         });
@@ -462,7 +464,7 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test('it should return error validation "Password can\'t be empty"', done => {
+    test("it should return error validation 'Password can't be empty'", done => {
       request(app)
         .put(`/passwords/${PasswordId}`)
         .set("token", testToken)
@@ -473,7 +475,7 @@ describe("Password Routes", () => {
         })
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body.msg).toContain("Password can\'t be empty");
+          expect(response.body.msg).toContain("Password can't be empty");
           expect(response.status).toBe(400);
           done();
         });
@@ -568,7 +570,7 @@ describe("Password Routes", () => {
         .delete(`/passwords/${PasswordId}`)
         .set("token", testToken)
         .end((err, response) => {
-          console.log(response.body);
+          // console.log(response.body);
           expect(err).toBe(null);
           expect(response.status).toBe(200);
           queryInterface
@@ -579,13 +581,13 @@ describe("Password Routes", () => {
             .catch(err => done(err));
         });
     });
-    test("it should return error 'can\'t be find Data', with status 404", done => {
+    test("it should return error 'Can't find Data', with status 404", done => {
       request(app)
         .delete(`/passwords/${PasswordId}`)
         .set("token", testToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "can\'t be find Data");
+          expect(response.body).toHaveProperty("msg", "Can't find Data");
           expect(response.status).toBe(404);
           done();
         });

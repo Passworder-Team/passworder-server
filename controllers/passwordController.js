@@ -1,6 +1,6 @@
 const { User, Password } = require("../models");
-const jwt = require('jsonwebtoken')
-const getRandomSecret = require('../helpers/getRandomSecret')
+const jwt = require("jsonwebtoken");
+const getRandomSecret = require("../helpers/getRandomSecret");
 
 class PasswordController {
   static addPassword(req, res, next) {
@@ -17,9 +17,10 @@ class PasswordController {
             id: password.id,
             account: password.account,
             email: password.email,
-            UserId: password.UserId,
+            password: password.password,
+            UserId: password.UserId
           },
-          msg: "Succesfully input new password"
+          msg: "Succesfuly input new password"
         };
         res.status(201).json(data);
       })
@@ -39,9 +40,9 @@ class PasswordController {
               id: password.id,
               account: password.account,
               email: password.email,
-              UserId: password.UserId,
-            }
-          })
+              UserId: password.UserId
+            };
+          });
           res.status(200).json(newPasswords);
         } else {
           const err = {
@@ -58,17 +59,18 @@ class PasswordController {
     Password.findByPk(id)
       .then(password => {
         if (password) {
-          const { id, account, email, UserId } = password
-          const randomSecret = getRandomSecret()
+          const { id, account, email, UserId } = password;
+          const randomSecret = getRandomSecret();
           const encryptedPassword = jwt.sign(password.password, randomSecret);
-          console.log('Encrypted Pass:',encryptedPassword);
-          console.log('Random secret', randomSecret);
+          // console.log('Encrypted Pass:',encryptedPassword);
+          // console.log('Random secret', randomSecret);
           res.status(200).json({
             id,
             account,
             email,
+            password: encryptedPassword,
             UserId
-          })
+          });
         } else {
           next({
             name: "dataNotFound"
@@ -131,7 +133,11 @@ class PasswordController {
             name: "dataNotFound"
           };
           next(err);
-        } else res.status(200).json(password);
+        } else {
+          res.status(200).json({
+            msg: "Delete password succes"
+          });
+        }
       })
       .catch(next);
   }
