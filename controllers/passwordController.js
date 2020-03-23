@@ -1,6 +1,8 @@
 const { User, Password } = require("../models");
 const jwt = require('jsonwebtoken')
 const getRandomSecret = require('../helpers/getRandomSecret')
+const Redis = require('ioredis')
+const redis = new Redis()
 
 class PasswordController {
   static addPassword(req, res, next) {
@@ -53,30 +55,53 @@ class PasswordController {
       .catch(next);
   }
 
-  static readById(req, res, next) {
+  static async readById(req, res, next) {
     const id = +req.params.id;
-    Password.findByPk(id)
-      .then(password => {
-        if (password) {
-          const { id, account, email, UserId } = password
-          const randomSecret = getRandomSecret()
-          const encryptedPassword = jwt.sign(password.password, randomSecret);
-          console.log('Encrypted Pass:',encryptedPassword);
-          console.log('Random secret', randomSecret);
-          res.status(200).json({
-            id,
-            account,
-            email,
-            UserId
-          })
-        } else {
-          next({
-            name: "dataNotFound"
-          });
-        }
-      })
-      .catch(next);
+    try {
+      const password = await Password.findByPk(id)
+      if (password) {
+        const { id, account, email, UserId } = password
+        const randomSecret = getRandomSecret()
+        redis.set('password' + id, randomSecret)
+        const encryptedPassword = jwt.sign(password.password, randomSecret);
+        res.status(200).json({
+          id,
+          account,
+          email,
+          password: encryptedPassword,
+          UserId
+        })
+      } else {
+        next({
+          name: "dataNotFound"
+        });
+      }
+    } catch (err) {
+      next(err)
+    }
+    // Password.findByPk(id)
+    //   .then(password => {
+    //     if (password) {
+    //       const { id, account, email, UserId } = password
+    //       const randomSecret = getRandomSecret()
+    //       const encryptedPassword = jwt.sign(password.password, randomSecret);
+    //       console.log('Encrypted Pass:',encryptedPassword);
+    //       console.log('Random secret', randomSecret);
+    //       res.status(200).json({
+    //         id,
+    //         account,
+    //         email,
+    //         UserId
+    //       })
+    //     } else {
+    //       next({
+    //         name: "dataNotFound"
+    //       });
+    //     }
+    //   })
+    //   .catch(next);
   }
+
   static update(req, res, next) {
     const id = req.params.id;
     const updatePassword = {
