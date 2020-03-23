@@ -34,7 +34,12 @@ module.exports = (err, req, res, next) => {
     res.status(401).json({
       msg: "You must login first"
     });
+  } else if(error.name === "wrongOtp") {
+    res.status(400).json({
+      msg: error.message
+    });
   } else {
+    console.log(err);
     res.status(500).json({
       msg: "Internal Server Error"
     });
