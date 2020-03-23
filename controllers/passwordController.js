@@ -1,4 +1,6 @@
 const { User, Password } = require("../models");
+const jwt = require('jsonwebtoken')
+const getRandomSecret = require('../helpers/getRandomSecret')
 
 class PasswordController {
   static addPassword(req, res, next) {
@@ -11,12 +13,13 @@ class PasswordController {
     Password.create(newPassword)
       .then(password => {
         const data = {
-          id: password.id,
-          account: password.account,
-          email: password.email,
-          password: password.password,
-          UserId: password.UserId,
-          msg: "Succesfuly input new password"
+          data: {
+            id: password.id,
+            account: password.account,
+            email: password.email,
+            UserId: password.UserId,
+          },
+          msg: "Succesfully input new password"
         };
         res.status(201).json(data);
       })
@@ -31,7 +34,15 @@ class PasswordController {
     })
       .then(passwords => {
         if (passwords.length) {
-          res.status(200).json(passwords);
+          const newPasswords = passwords.map(password => {
+            return {
+              id: password.id,
+              account: password.account,
+              email: password.email,
+              UserId: password.UserId,
+            }
+          })
+          res.status(200).json(newPasswords);
         } else {
           const err = {
             name: "dataNotFound"
@@ -41,25 +52,27 @@ class PasswordController {
       })
       .catch(next);
   }
+
   static readById(req, res, next) {
     const id = +req.params.id;
     Password.findByPk(id)
       .then(password => {
         if (password) {
-          if (password.UserId === req.decode.id) {
-            res.status(200).json(password);
-          } else {
-            const err = {
-              name: "NotAuthorized",
-              message: "You not have authorization"
-            };
-            next(err);
-          }
+          const { id, account, email, UserId } = password
+          const randomSecret = getRandomSecret()
+          const encryptedPassword = jwt.sign(password.password, randomSecret);
+          console.log('Encrypted Pass:',encryptedPassword);
+          console.log('Random secret', randomSecret);
+          res.status(200).json({
+            id,
+            account,
+            email,
+            UserId
+          })
         } else {
-          const err = {
+          next({
             name: "dataNotFound"
-          };
-          next(err);
+          });
         }
       })
       .catch(next);

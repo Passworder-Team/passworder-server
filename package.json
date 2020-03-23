@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Passworder-Team/passworder-server#readme",
   "dependencies": {
+    "aws-sdk": "^2.643.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",

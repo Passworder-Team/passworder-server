@@ -1,10 +1,12 @@
 # passworder-server
 
 List of available endpoints:
+
 - `POST /auth/register`
 - `POST /auth/login`
 
 Manage logged in user data:
+
 - `GET /passwords`
 - `GET /passwords/:id`
 - `POST /passwords`
@@ -12,14 +14,11 @@ Manage logged in user data:
 
 Error response format:
 
-Status: `4xx` or `5xx`  
+Status: `4xx` or `5xx`
 
 ```json
 {
-  "errors": [
-    "...",
-    "..."
-  ]
+  "errors": ["...", "..."]
 }
 ```
 
@@ -39,10 +38,12 @@ Status: `4xx` or `5xx`
     ```json
     {
       "msg": "Register success",
-      "id": "...",
-      "name": "...",
-      "email": "...",
-      "token": "...",
+      "user": {
+        "id": "...",
+        "name": "...",
+        "email": "..."
+      },
+      "token": "..."
     }
     ```
 
@@ -59,9 +60,11 @@ Status: `4xx` or `5xx`
     ```json
     {
       "msg": "Login success",
-      "id": "...",
-      "name": "...",
-      "email": "...",
+      "user": {
+        "id": "...",
+        "name": "...",
+        "email": "..."
+      },
       "token": "..."
     }
     ```
@@ -72,17 +75,17 @@ Status: `4xx` or `5xx`
 
 - Request Header(s):
   - `access_token`: `<token>`  
-    *replace `<token>` with your actual token from `POST /auth/login` response*
+    _replace `<token>` with your actual token from `POST /auth/login` response_
 - Response:
   - `status`: `200`
   - `body`:
     ```json
     [
       {
-        "_id": "...",
+        "id": "...",
         "account": "...",
-        "username": "...",
-        "password": "...",
+        "email": "...",
+        "UserId": "..."
       }
     ]
     ```
@@ -91,7 +94,7 @@ Status: `4xx` or `5xx`
 
 - Request Header(s):
   - `access_token`: `<token>`  
-    *replace `<token>` with your actual token from `POST /auth/login` response*
+    _replace `<token>` with your actual token from `POST /auth/login` response_
 - Request Param(s):..
   - `id`: `String`
 - Response:
@@ -99,10 +102,11 @@ Status: `4xx` or `5xx`
   - `body`:
     ```json
     {
-      "_id": "...",
+      "id": "...",
       "account": "...",
-      "username": "...",
-      "password": "...",
+      "email": "...",
+      "password": "encrypted password",
+      "UserId": "..."
     }
     ```
 
@@ -110,21 +114,24 @@ Status: `4xx` or `5xx`
 
 - Request Header(s):
   - `access_token`: `<token>`  
-    *replace `<token>` with your actual token from `POST /auth/login` response*
+    _replace `<token>` with your actual token from `POST /auth/login` response_
   - `Content-Type`: `application/x-www-form-urlencoded` or `application/json`
 - Request Body:
   - `account`: `String (required)`
-  - `username`: `String (required)`
+  - `email`: `String (required)`
   - `password`: `String (required)`
 - Response:
   - `status`: `201`
   - `body`:
     ```json
     {
-      "_id": "...",
-      "account": "...",
-      "username": "...",
-      "password": "...",
+      "data": {
+        "id": "...",
+        "account": "...",
+        "email": "...",
+        "UserId": "..."
+      },
+      "msg": "Succesfully input new password"
     }
     ```
 
@@ -132,7 +139,7 @@ Status: `4xx` or `5xx`
 
 - Request Header(s):
   - `access_token`: `<token>`  
-    *replace `<token>` with your actual token from `POST /auth/login` response*
+    _replace `<token>` with your actual token from `POST /auth/login` response_
 - Request Param(s):
   - `id`: `String`
 - Response:
@@ -140,9 +147,6 @@ Status: `4xx` or `5xx`
   - `body`:
     ```json
     {
-      "_id": "...",
-      "account": "...",
-      "username": "...",
-      "password": "...",
+      "msg": "Delete password success"
     }
     ```
