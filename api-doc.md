@@ -1,10 +1,12 @@
 # passworder-server
 
 List of available endpoints:
+
 - `POST /auth/register`
 - `POST /auth/login`
 
 Manage logged in user data:
+
 - `GET /passwords`
 - `GET /passwords/:id`
 - `POST /passwords`
@@ -12,14 +14,11 @@ Manage logged in user data:
 
 Error response format:
 
-Status: `4xx` or `5xx`  
+Status: `4xx` or `5xx`
 
 ```json
 {
-  "errors": [
-    "...",
-    "..."
-  ]
+  "errors": ["...", "..."]
 }
 ```
 
@@ -42,7 +41,7 @@ Status: `4xx` or `5xx`
       "id": "...",
       "name": "...",
       "email": "...",
-      "token": "...",
+      "token": "..."
     }
     ```
 
@@ -72,17 +71,17 @@ Status: `4xx` or `5xx`
 
 - Request Header(s):
   - `access_token`: `<token>`  
-    *replace `<token>` with your actual token from `POST /auth/login` response*
+    _replace `<token>` with your actual token from `POST /auth/login` response_
 - Response:
   - `status`: `200`
   - `body`:
     ```json
     [
       {
-        "_id": "...",
+        "id": "...",
         "account": "...",
         "username": "...",
-        "password": "...",
+        "password": "..."
       }
     ]
     ```
@@ -91,7 +90,7 @@ Status: `4xx` or `5xx`
 
 - Request Header(s):
   - `access_token`: `<token>`  
-    *replace `<token>` with your actual token from `POST /auth/login` response*
+    _replace `<token>` with your actual token from `POST /auth/login` response_
 - Request Param(s):..
   - `id`: `String`
 - Response:
@@ -99,10 +98,10 @@ Status: `4xx` or `5xx`
   - `body`:
     ```json
     {
-      "_id": "...",
+      "id": "...",
       "account": "...",
       "username": "...",
-      "password": "...",
+      "password": "..."
     }
     ```
 
@@ -110,7 +109,7 @@ Status: `4xx` or `5xx`
 
 - Request Header(s):
   - `access_token`: `<token>`  
-    *replace `<token>` with your actual token from `POST /auth/login` response*
+    _replace `<token>` with your actual token from `POST /auth/login` response_
   - `Content-Type`: `application/x-www-form-urlencoded` or `application/json`
 - Request Body:
   - `account`: `String (required)`
@@ -121,10 +120,10 @@ Status: `4xx` or `5xx`
   - `body`:
     ```json
     {
-      "_id": "...",
+      "id": "...",
       "account": "...",
       "username": "...",
-      "password": "...",
+      "password": "..."
     }
     ```
 
@@ -132,7 +131,7 @@ Status: `4xx` or `5xx`
 
 - Request Header(s):
   - `access_token`: `<token>`  
-    *replace `<token>` with your actual token from `POST /auth/login` response*
+    _replace `<token>` with your actual token from `POST /auth/login` response_
 - Request Param(s):
   - `id`: `String`
 - Response:
@@ -140,9 +139,9 @@ Status: `4xx` or `5xx`
   - `body`:
     ```json
     {
-      "_id": "...",
+      "id": "...",
       "account": "...",
       "username": "...",
-      "password": "...",
+      "password": "..."
     }
     ```
