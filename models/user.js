@@ -72,6 +72,19 @@ module.exports = (sequelize, DataTypes) => {
             msg: "Password is too short. Minimum password length is 6"
           }
         }
+      },
+      phoneNumber: {
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: "Phone number cannot be empty or null"
+          },
+          len: {
+            args: [10],
+            msg: "Phone number is too short. Minimum phone number length is 10"
+          }
+        }
       }
     },
     {

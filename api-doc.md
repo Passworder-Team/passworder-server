@@ -38,9 +38,12 @@ Status: `4xx` or `5xx`
     ```json
     {
       "msg": "Register success",
-      "id": "...",
-      "name": "...",
-      "email": "...",
+      "user": {
+        "id": "...",
+        "name": "...",
+        "email": "...",
+        "phoneNumber": "...
+      },
       "token": "..."
     }
     ```
@@ -58,9 +61,12 @@ Status: `4xx` or `5xx`
     ```json
     {
       "msg": "Login success",
-      "id": "...",
-      "name": "...",
-      "email": "...",
+      "user": {
+        "id": "...",
+        "name": "...",
+        "email": "...",
+        "phoneNumber": "..."
+      },
       "token": "..."
     }
     ```
@@ -80,8 +86,8 @@ Status: `4xx` or `5xx`
       {
         "id": "...",
         "account": "...",
-        "username": "...",
-        "password": "..."
+        "email": "...",
+        "UserId": "..."
       }
     ]
     ```
@@ -100,8 +106,9 @@ Status: `4xx` or `5xx`
     {
       "id": "...",
       "account": "...",
-      "username": "...",
-      "password": "..."
+      "email": "...",
+      "password": "encrypted password",
+      "UserId": "..."
     }
     ```
 
@@ -113,17 +120,20 @@ Status: `4xx` or `5xx`
   - `Content-Type`: `application/x-www-form-urlencoded` or `application/json`
 - Request Body:
   - `account`: `String (required)`
-  - `username`: `String (required)`
+  - `email`: `String (required)`
   - `password`: `String (required)`
 - Response:
   - `status`: `201`
   - `body`:
     ```json
     {
-      "id": "...",
-      "account": "...",
-      "username": "...",
-      "password": "..."
+      "data": {
+        "id": "...",
+        "account": "...",
+        "email": "...",
+        "UserId": "..."
+      },
+      "msg": "Succesfully input new password"
     }
     ```
 
@@ -139,9 +149,6 @@ Status: `4xx` or `5xx`
   - `body`:
     ```json
     {
-      "id": "...",
-      "account": "...",
-      "username": "...",
-      "password": "..."
+      "msg": "Delete password success"
     }
     ```

@@ -1,7 +1,7 @@
 const { User } = require("../models");
 
 module.exports = {
-  check: (req, res, next) => {
+  check(req, res, next) {
     const id = req.decode.id;
     User.findByPk(id)
       .then(User => {

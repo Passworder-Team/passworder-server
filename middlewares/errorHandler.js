@@ -20,7 +20,7 @@ module.exports = (err, req, res, next) => {
     });
   } else if (error.name === "dataNotFound") {
     res.status(404).json({
-      msg: "Cannot find Data"
+      msg: "Can't find Data"
     });
   } else if (error.name === "NotAuthorized") {
     res.status(401).json({

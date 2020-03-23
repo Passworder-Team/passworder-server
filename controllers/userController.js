@@ -7,19 +7,22 @@ class UserController {
     const newUser = {
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password,
+      phoneNumber: req.body.phoneNumber
     };
     User.create(newUser)
       .then(user => {
         const toToken = {
-          name: user.name,
-          email: user.email
+          id: user.id
         };
         const token = createToken(toToken);
         res.status(201).json({
-          id: user.id,
-          name: user.name,
-          email: user.email,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phoneNumber: req.body.phoneNumber
+          },
           token,
           msg: "Register success"
         });
@@ -37,14 +40,16 @@ class UserController {
           const check = comparePassword(req.body.password, user.password);
           if (check) {
             const toToken = {
-              name: user.name,
-              email: user.email
+              id: user.id
             };
             const token = createToken(toToken);
             res.status(200).json({
-              id: user.id,
-              name: user.name,
-              email: user.email,
+              user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                phoneNumber: user.phoneNumber
+              },
               token,
               msg: "Login success"
             });
