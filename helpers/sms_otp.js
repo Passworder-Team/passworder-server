@@ -10,7 +10,7 @@ AWS.config.update({
 module.exports = sendSmsOTP = (pin, phone) => {
   // Create publish parameters
   const params = {
-    Message: 'Your pin is ' + pin ? pin : '123456', /* required */
+    Message: 'Your pin is ' + (pin ? pin : '123456'), /* required */
     PhoneNumber: phone ? phone : '+6285693338168',
   };
 
