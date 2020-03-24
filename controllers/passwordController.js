@@ -77,7 +77,7 @@ class PasswordController {
           } else {
             const err = {
               name: "NotAuthorized",
-              message: "You not have authorization"
+              message: "You are not authorized"
             };
             throw err;
           }
@@ -141,7 +141,7 @@ class PasswordController {
       })
       .catch(next);
   }
-  
+
   static delete(req, res, next) {
     const id = +req.params.id;
     Password.destroy({

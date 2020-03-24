@@ -272,7 +272,6 @@ describe("Password Routes", () => {
         .set("token", testToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          console.log(response.body);
           expect(response.body).toHaveProperty("account", "www.Hacktiv8.com");
           expect(response.body).toHaveProperty("email", "admin@admin.com");
           expect(response.body).toHaveProperty("password", expect.any(String));
@@ -308,7 +307,7 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test("it should return error 'You not have authorization', with status 401", done => {
+    test("it should return error 'You are not authorized', with status 401", done => {
       // request(app)
       //   .get("/passwords/link/www.Hacktiv8.com")
       //   .set("token", testToken)
@@ -319,7 +318,7 @@ describe("Password Routes", () => {
       //     console.log("===================================");
       //     expect(response.body).toHaveProperty(
       //       "msg",
-      //       "You not have authorization"
+      //       "You are not authorized"
       //     );
       //     expect(response.status).toBe(401);
       //     queryInterface
@@ -334,16 +333,11 @@ describe("Password Routes", () => {
         email: "admin2@admin.com",
         password: "admin123"
       })
-        .then(res => {
-          console.log(
-            res.id,
-            "========================================================);"
-          );
-
-          const newId = res.id + 1;
-          testToken = createToken({ id: newId });
+        .then(result => {
+          result.dataValues.id = result.dataValues.id++;
+          testToken = createToken(result.dataValues);
           return Password.create({
-            account: "Hacktiv8",
+            account: "www.Hacktiv8.com",
             email: "admin2@admin.com",
             password: "admin123",
             UserId
@@ -355,12 +349,12 @@ describe("Password Routes", () => {
             .set("token", testToken)
             .end((err, response) => {
               expect(err).toBe(null);
-              console.log("===================================");
-              console.log(response.body);
-              console.log("===================================");
+              // console.log("===================================");
+              // console.log(response.body);
+              // console.log("===================================");
               expect(response.body).toHaveProperty(
                 "msg",
-                "You not have authorization"
+                "You are not authorized"
               );
               expect(response.status).toBe(401);
               queryInterface
@@ -381,9 +375,9 @@ describe("Password Routes", () => {
         email: "admin@admin.com",
         password: "admin123"
       })
-        .then(res => {
-          UserId = res.id;
-          testToken = createToken(res.dataValues);
+        .then(result => {
+          UserId = result.id;
+          testToken = createToken(result.dataValues);
           return Password.create({
             account: "Hacktiv8",
             email: "admin@admin.com",
@@ -449,70 +443,64 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test("it should return error 'You not have authorization', with status 401", done => {
-      request(app)
-        .get(`/passwords/${Password.id}`)
-        .set("token", testToken)
-        .end((err, response) => {
-          expect(err).toBe(null);
-          console.log("===================================");
-          console.log(response.body);
-          console.log("===================================");
-          expect(response.body).toHaveProperty(
-            "msg",
-            "You not have authorization"
-          );
-          expect(response.status).toBe(401);
-          queryInterface
-            .bulkDelete("Passwords", {})
-            .then(response => {
-              done();
-            })
-            .catch(err => done(err));
-        });
-      // User.create({
-      //   name: "admin",
-      //   email: "admin2@admin.com",
-      //   password: "admin123"
-      // })
-      //   .then(res => {
-      //     console.log(
-      //       res.id,
-      //       "========================================================);"
+    test("it should return error 'You are not authorized', with status 401", done => {
+      // request(app)
+      //   .get(`/passwords/${Password.id}`)
+      //   .set("token", testToken)
+      //   .end((err, response) => {
+      //     expect(err).toBe(null);
+      //     console.log("===================================");
+      //     console.log(response.body);
+      //     console.log("===================================");
+      //     expect(response.body).toHaveProperty(
+      //       "msg",
+      //       "You are not authorized"
       //     );
-
-      //     const newId = res.id + 1;
-      //     testToken = createToken({ id: newId });
-      //     return Password.create({
-      //       account: "Hacktiv8",
-      //       email: "admin2@admin.com",
-      //       password: "admin123",
-      //       UserId
-      //     });
-      //   })
-      //   .then(password => {
-      //     request(app)
-      //       .get(`/passwords/${Password.id}`)
-      //       .set("token", testToken)
-      //       .end((err, response) => {
-      //         expect(err).toBe(null);
-      //         console.log("===================================");
-      //         console.log(response.body);
-      //         console.log("===================================");
-      //         expect(response.body).toHaveProperty(
-      //           "msg",
-      //           "You not have authorization"
-      //         );
-      //         expect(response.status).toBe(401);
-      //         queryInterface
-      //           .bulkDelete("Passwords", {})
-      //           .then(response => {
-      //             done();
-      //           })
-      //           .catch(err => done(err));
-      //       });
-      //   })
-      //   .catch(done);
+      //     expect(response.status).toBe(401);
+      //     queryInterface
+      //       .bulkDelete("Passwords", {})
+      //       .then(response => {
+      //         done();
+      //       })
+      //       .catch(err => done(err));
+      //   });
+      User.create({
+        name: "admin",
+        email: "admin2@admin.com",
+        password: "admin123"
+      })
+        .then(result => {
+          testToken = createToken(result.dataValues);
+          return Password.create({
+            account: "Hacktiv8",
+            email: "admin2@admin.com",
+            password: "admin123",
+            UserId
+          });
+        })
+        .then(password => {
+          request(app)
+            .get(`/passwords/${password.id}`)
+            .set("token", testToken)
+            .end((err, response) => {
+              expect(err).toBe(null);
+              // console.log("===================================");
+              // console.log(response.body);
+              // console.log("===================================");
+              expect(response.body).toHaveProperty(
+                "msg",
+                "You are not authorized"
+              );
+              expect(response.status).toBe(401);
+              queryInterface
+                .bulkDelete("Passwords", {})
+                .then(response => {
+                  done();
+                })
+                .catch(err => done(err));
+            });
+        })
+        .catch(done);
     });
   });
   describe("Update Password test", () => {
@@ -522,9 +510,9 @@ describe("Password Routes", () => {
         email: "admin@admin.com",
         password: "admin123"
       })
-        .then(res => {
-          UserId = res.id;
-          testToken = createToken(res.dataValues);
+        .then(result => {
+          UserId = result.id;
+          testToken = createToken(result.dataValues);
           return Password.create({
             account: "Hacktiv8",
             email: "admin@admin.com",
@@ -670,15 +658,14 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test("it should return error 'You not have authorization', with status 401", done => {
+    test("it should return error 'You are not authorized', with status 401", done => {
       User.create({
         name: "admin",
         email: "admin2@admin.com",
         password: "admin123"
       })
-        .then(res => {
-          res.dataValues = res.id + 1;
-          testToken = createToken(res.dataValues);
+        .then(result => {
+          testToken = createToken(result.dataValues);
           return Password.create({
             account: "Hacktiv8",
             email: "admin2@admin.com",
@@ -688,13 +675,18 @@ describe("Password Routes", () => {
         })
         .then(password => {
           request(app)
-            .get(`/passwords/${password.id}`)
+            .put(`/passwords/${password.id}`)
             .set("token", testToken)
+            .send({
+              account: "Hacktiv",
+              email: "admin5@admin.com",
+              password: "admin"
+            })
             .end((err, response) => {
               expect(err).toBe(null);
               expect(response.body).toHaveProperty(
                 "msg",
-                "You not have authorization"
+                "You are not authorized"
               );
               expect(response.status).toBe(401);
               queryInterface
@@ -780,15 +772,14 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test("it should return error 'You not have authorization', with status 401", done => {
+    test("it should return error 'You are not authorized', with status 401", done => {
       User.create({
         name: "admin",
         email: "admin2@admin.com",
         password: "admin123"
       })
-        .then(res => {
-          res.dataValues = res.id + 1;
-          testToken = createToken(res.dataValues);
+        .then(result => {
+          testToken = createToken(result.dataValues);
           return Password.create({
             account: "Hacktiv8",
             email: "admin2@admin.com",
@@ -798,13 +789,13 @@ describe("Password Routes", () => {
         })
         .then(password => {
           request(app)
-            .get(`/passwords/${password.id}`)
+            .delete(`/passwords/${password.id}`)
             .set("token", testToken)
             .end((err, response) => {
               expect(err).toBe(null);
               expect(response.body).toHaveProperty(
                 "msg",
-                "You not have authorization"
+                "You are not authorized"
               );
               expect(response.status).toBe(401);
               queryInterface
