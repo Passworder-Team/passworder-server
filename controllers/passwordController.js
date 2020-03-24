@@ -1,8 +1,8 @@
 const { Password } = require("../models");
-const jwt = require('jsonwebtoken')
-const getRandomSecret = require('../helpers/getRandomSecret')
-const Redis = require('ioredis')
-const redis = new Redis()
+const jwt = require("jsonwebtoken");
+const getRandomSecret = require("../helpers/getRandomSecret");
+const Redis = require("ioredis");
+const redis = new Redis();
 
 class PasswordController {
   static addPassword(req, res, next) {
@@ -19,7 +19,8 @@ class PasswordController {
             id: password.id,
             account: password.account,
             email: password.email,
-            UserId: password.UserId
+            UserId: password.UserId,
+            password: password.password
           },
           msg: "Succesfuly input new password"
         };
@@ -55,15 +56,49 @@ class PasswordController {
       })
       .catch(next);
   }
-
+  static readByLink(req, res, next) {
+    const link = req.params.account;
+    Password.findOne({
+      where: {
+        account: link
+      }
+    })
+      .then(result => {
+        console.log(result, '==============================================================');
+        
+        if (result) {
+          if (result.UserId === req.decode.id) {
+            const { id, account, email, UserId, password } = result;
+            res.status(200).json({
+              id,
+              account,
+              email,
+              password,
+              UserId
+            });
+          } else {
+            const err = {
+              name: "NotAuthorized",
+              message: "You are not authorized"
+            };
+            throw err;
+          }
+        } else {
+          next({
+            name: "dataNotFound"
+          });
+        }
+      })
+      .catch(next);
+  }
   static readById(req, res, next) {
     const id = +req.params.id;
     Password.findByPk(id)
       .then(password => {
         if (password) {
-          const { id, account, email, UserId } = password
-          const randomSecret = getRandomSecret()
-          redis.set('password' + id, randomSecret)
+          const { id, account, email, UserId } = password;
+          const randomSecret = getRandomSecret();
+          redis.set("password" + id, randomSecret);
           const encryptedPassword = jwt.sign(password.password, randomSecret);
           res.status(200).json({
             id,
@@ -71,7 +106,7 @@ class PasswordController {
             email,
             password: encryptedPassword,
             UserId
-          })
+          });
         } else {
           next({
             name: "dataNotFound"
@@ -108,7 +143,7 @@ class PasswordController {
       })
       .catch(next);
   }
-  
+
   static delete(req, res, next) {
     const id = +req.params.id;
     Password.destroy({

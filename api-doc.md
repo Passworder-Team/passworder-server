@@ -1,6 +1,6 @@
 # passworder-server
 
-List of available endpoints:  
+List of available endpoints:
 
 **Auth**
 
@@ -8,13 +8,16 @@ List of available endpoints:
 - `POST /auth/login`
 
 **Password**
+
 - `GET /passwords`
 - `GET /passwords/:id`
+- `GET /passwords/link/:account`
 - `POST /passwords`
 - `PUT /passwords/:id`
 - `DELETE /passwords/:id`
 
 **OTP**
+
 - `GET /otp/:passId`
 - `POST /otp`
 
@@ -27,7 +30,9 @@ Status: `4xx` or `5xx`
   "errors": ["...", "..."]
 }
 ```
+
 or
+
 ```json
 {
   "msg": "..."
@@ -124,6 +129,26 @@ or
     }
     ```
 
+### GET /passwords/link/:account
+
+- Request Header(s):
+  - `token`: `<token>`  
+    _replace `<token>` with your actual token from `POST /auth/login` response_
+- Request Param(s):..
+  - `account`: `String`
+- Response:
+  - `status`: `200`
+  - `body`:
+    ```json
+    {
+      "id": "...",
+      "account": "...",
+      "email": "...",
+      "password": "....",
+      "UserId": "..."
+    }
+    ```
+
 ### POST /passwords
 
 - Request Header(s):
@@ -199,9 +224,9 @@ or
   - `body`:
     ```json
     {
-        "msg": "Send OTP success. Please check Your phone and input otp number.",
-        "result": "MessageID is ..."
-      }
+      "msg": "Send OTP success. Please check Your phone and input otp number.",
+      "result": "MessageID is ..."
+    }
     ```
 
 ### POST /otp

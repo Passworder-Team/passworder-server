@@ -234,7 +234,7 @@ describe("Password Routes", () => {
         });
     });
   });
-  describe.only("Get one Password test", () => {
+  describe("Get one Password by link test", () => {
     beforeAll(done => {
       User.create({
         name: "admin",
@@ -243,10 +243,100 @@ describe("Password Routes", () => {
       })
         .then(user => {
           UserId = user.id;
-          console.log('UserId: ', UserId);
           authorizedToken = createToken({ id: UserId });
           return Password.create({
-            account: "Hacktiv8",
+            account: "www.Hacktiv8.com",
+            email: "admin@admin.com",
+            password: "admin123",
+            UserId
+          });
+        })
+        .then(password => {
+          PasswordId = password.id;
+          return User.create({
+            name: "admin2",
+            email: "admin2@admin.com",
+            password: "admin123"
+          })
+        })
+        .then(user => {
+          const unauthorizedId = user.id
+          unauthorizedToken = createToken({ id: unauthorizedId });
+          done();
+        })
+        .catch(done);
+    });
+    afterAll(done => {
+      queryInterface
+        .bulkDelete("Users", {})
+        .then(response => {
+          done();
+        })
+        .catch(err => done(err));
+    });
+    test("it should return object password, with status 200", done => {
+      request(app)
+        .get("/passwords/link/www.Hacktiv8.com")
+        .set("token", authorizedToken)
+        .end((err, response) => {
+          expect(err).toBe(null);
+          expect(response.body).toHaveProperty("account", "www.Hacktiv8.com");
+          expect(response.body).toHaveProperty("email", "admin@admin.com");
+          expect(response.body).toHaveProperty("password", expect.any(String));
+          expect(response.body).toHaveProperty("UserId", UserId);
+          expect(response.status).toBe(200);
+          done()
+        });
+    });
+    test("it should return error 'Can't find Data', with status 404", done => {
+      request(app)
+        .get("/passwords/link/www.Facebook.com")
+        .set("token", authorizedToken)
+        .end((err, response) => {
+          expect(err).toBe(null);
+          expect(response.body).toHaveProperty("msg", "Can't find Data");
+          expect(response.status).toBe(404);
+          done();
+        });
+    });
+    test("it should return error 'You must login first', with status 401", done => {
+      request(app)
+        .get("/passwords/link/www.Hacktiv8.com")
+        .set("token", "")
+        .end((err, response) => {
+          expect(err).toBe(null);
+          expect(response.body).toHaveProperty("msg", "You must login first");
+          expect(response.status).toBe(401);
+          done();
+        });
+    });
+    test("it should return error 'You are not authorized', with status 401", done => {
+      request(app)
+        .get("/passwords/link/www.Hacktiv8.com")
+        .set("token", unauthorizedToken)
+        .end((err, response) => {
+          expect(err).toBe(null);
+          expect(response.body).toHaveProperty(
+            "msg",
+            "You are not authorized"
+          );
+          expect(response.status).toBe(401);
+          done()
+        });
+    });
+  });
+  describe("Get one Password by id test", () => {
+    beforeAll(done => {
+      User.create({
+        name: "admin",
+        email: "admin@admin.com",
+        password: "admin123"
+      })
+        .then(user => {
+          UserId = user.id;
+          authorizedToken = createToken({ id: UserId });
+          return Password.create({
+            account: "www.Hacktiv8.com",
             email: "admin@admin.com",
             password: "admin123",
             UserId
@@ -281,26 +371,24 @@ describe("Password Routes", () => {
         .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("account", "Hacktiv8");
+          expect(response.body).toHaveProperty("account", "www.Hacktiv8.com");
           expect(response.body).toHaveProperty("email", "admin@admin.com");
           expect(response.body).toHaveProperty("password", expect.any(String));
           expect(response.body).toHaveProperty("UserId", UserId);
           expect(response.status).toBe(200);
-          queryInterface
-            .bulkDelete("Passwords", {})
-            .then(response => {
-              done();
-            })
-            .catch(err => done(err));
+          done()
         });
     });
-    test("it should return error 'Password with id ${PasswordId} not found', with status 404", done => {
+    test("it should return error 'Password with id ... not found', with status 404", done => {
       request(app)
-        .get(`/passwords/${PasswordId}`)
+        .get(`/passwords/${PasswordId + 1}`)
         .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", `Password with id ${PasswordId} not found`);
+          expect(response.body).toHaveProperty(
+            "msg",
+            `Password with id ${PasswordId + 1} not found`
+          );
           expect(response.status).toBe(404);
           done();
         });
@@ -316,7 +404,7 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test("it should return error 'You not have authorization', with status 401", done => {
+    test("it should return error 'You are not authorized', with status 401", done => {
       request(app)
         .get(`/passwords/${PasswordId}`)
         .set("token", unauthorizedToken)
@@ -327,12 +415,7 @@ describe("Password Routes", () => {
             "You are not authorized"
           );
           expect(response.status).toBe(401);
-          queryInterface
-            .bulkDelete("Passwords", {})
-            .then(response => {
-              done();
-            })
-            .catch(err => done(err));
+          done()
         });
     });
   });
@@ -343,11 +426,11 @@ describe("Password Routes", () => {
         email: "admin@admin.com",
         password: "admin123"
       })
-        .then(res => {
-          UserId = res.id;
-          authorizedToken = createToken(res.dataValues);
+        .then(user => {
+          UserId = user.id;
+          authorizedToken = createToken({ id: UserId });
           return Password.create({
-            account: "Hacktiv8",
+            account: "www.Hacktiv8.com",
             email: "admin@admin.com",
             password: "admin123",
             UserId
@@ -355,6 +438,15 @@ describe("Password Routes", () => {
         })
         .then(password => {
           PasswordId = password.id;
+          return User.create({
+            name: "admin2",
+            email: "admin2@admin.com",
+            password: "admin123"
+          })
+        })
+        .then(user => {
+          const unauthorizedId = user.id
+          unauthorizedToken = createToken({ id: unauthorizedId });
           done();
         })
         .catch(done);
@@ -392,7 +484,7 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test("it should return error 'Can't find data'", done => {
+    test("it should return error 'Password with id ... not found'", done => {
       request(app)
         .put(`/passwords/${PasswordId + 1}`)
         .send({
@@ -403,7 +495,10 @@ describe("Password Routes", () => {
         .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "Can't find Data");
+          expect(response.body).toHaveProperty(
+            "msg",
+            `Password with id ${PasswordId + 1} not found`
+          );
           expect(response.status).toBe(404);
           done();
         });
@@ -488,56 +583,38 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test("it should return error 'You not have authorization', with status 401", done => {
-      User.create({
-        name: "admin",
-        email: "admin2@admin.com",
-        password: "admin123"
-      })
-        .then(res => {
-          res.dataValues = res.id + 1;
-          authorizedToken = createToken(res.dataValues);
-          return Password.create({
-            account: "Hacktiv8",
-            email: "admin2@admin.com",
-            password: "admin123",
-            UserId
-          });
+    test("it should return error 'You are not authorized', with status 401", done => {
+      request(app)
+        .put(`/passwords/${PasswordId}`)
+        .set("token", unauthorizedToken)
+        .send({
+          account: "Hacktiv",
+          email: "admin5@admin.com",
+          password: "admin"
         })
-        .then(password => {
-          request(app)
-            .get(`/passwords/${password.id}`)
-            .set("token", authorizedToken)
-            .end((err, response) => {
-              expect(err).toBe(null);
-              expect(response.body).toHaveProperty(
-                "msg",
-                "You not have authorization"
-              );
-              expect(response.status).toBe(401);
-              queryInterface
-                .bulkDelete("Passwords", {})
-                .then(response => {
-                  done();
-                })
-                .catch(err => done(err));
-            });
-        })
-        .catch(done);
+        .end((err, response) => {
+          expect(err).toBe(null);
+          expect(response.body).toHaveProperty(
+            "msg",
+            "You are not authorized"
+          );
+          expect(response.status).toBe(401);
+          done()
+        });
     });
   });
   describe("Delete Password test", () => {
-    beforeAll(done => {
+    beforeEach(done => {
       User.create({
         name: "admin",
-        email: "admin4@admin.com",
+        email: "admin@admin.com",
         password: "admin123"
       })
-        .then(res => {
-          UserId = res.id;
-          authorizedToken = createToken(res.dataValues);
+        .then(user => {
+          UserId = user.id;
+          authorizedToken = createToken({ id: UserId });
           return Password.create({
-            account: "Hacktiv8",
+            account: "www.Hacktiv8.com",
             email: "admin@admin.com",
             password: "admin123",
             UserId
@@ -545,11 +622,20 @@ describe("Password Routes", () => {
         })
         .then(password => {
           PasswordId = password.id;
+          return User.create({
+            name: "admin2",
+            email: "admin2@admin.com",
+            password: "admin123"
+          })
+        })
+        .then(user => {
+          const unauthorizedId = user.id
+          unauthorizedToken = createToken({ id: unauthorizedId });
           done();
         })
         .catch(done);
     });
-    afterAll(done => {
+    afterEach(done => {
       queryInterface
         .bulkDelete("Users", {})
         .then(response => {
@@ -557,7 +643,7 @@ describe("Password Routes", () => {
         })
         .catch(err => done(err));
     });
-    test("it should return status 200", done => {
+    test("it should return success delete with status 200", done => {
       request(app)
         .delete(`/passwords/${PasswordId}`)
         .set("token", authorizedToken)
@@ -565,21 +651,19 @@ describe("Password Routes", () => {
           // console.log(response.body);
           expect(err).toBe(null);
           expect(response.status).toBe(200);
-          queryInterface
-            .bulkDelete("Passwords", {})
-            .then(response => {
-              done();
-            })
-            .catch(err => done(err));
+          done()
         });
     });
-    test("it should return error 'Can't find Data', with status 404", done => {
+    test("it should return error 'Password with id ... not found', with status 404", done => {
       request(app)
-        .delete(`/passwords/${PasswordId}`)
+        .delete(`/passwords/${PasswordId + 1}`)
         .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "Can't find Data");
+          expect(response.body).toHaveProperty(
+            "msg",
+            `Password with id ${PasswordId + 1} not found`
+          );
           expect(response.status).toBe(404);
           done();
         });
@@ -595,42 +679,19 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test("it should return error 'You not have authorization', with status 401", done => {
-      User.create({
-        name: "admin",
-        email: "admin2@admin.com",
-        password: "admin123"
-      })
-        .then(res => {
-          res.dataValues = res.id + 1;
-          authorizedToken = createToken(res.dataValues);
-          return Password.create({
-            account: "Hacktiv8",
-            email: "admin2@admin.com",
-            password: "admin123",
-            UserId
-          });
-        })
-        .then(password => {
-          request(app)
-            .get(`/passwords/${password.id}`)
-            .set("token", authorizedToken)
-            .end((err, response) => {
-              expect(err).toBe(null);
-              expect(response.body).toHaveProperty(
-                "msg",
-                "You not have authorization"
-              );
-              expect(response.status).toBe(401);
-              queryInterface
-                .bulkDelete("Passwords", {})
-                .then(response => {
-                  done();
-                })
-                .catch(err => done(err));
-            });
-        })
-        .catch(done);
+    test("it should return error 'You are not authorized', with status 401", done => {
+      request(app)
+        .delete(`/passwords/${PasswordId}`)
+        .set("token", unauthorizedToken)
+        .end((err, response) => {
+          expect(err).toBe(null);
+          expect(response.body).toHaveProperty(
+            "msg",
+            "You are not authorized"
+          );
+          expect(response.status).toBe(401);
+          done()
+        });
     });
   });
 });
