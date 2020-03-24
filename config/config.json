@@ -13,7 +13,8 @@
     "database": "Passworder_test",
     "host": "localhost",
     "dialect": "postgres",
-    "operatorsAliases": 0
+    "operatorsAliases": 0,
+    "logging": false
   },
   "production": {
     "use_env_variable": "DATABASE_URL"

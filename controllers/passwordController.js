@@ -64,8 +64,6 @@ class PasswordController {
       }
     })
       .then(result => {
-        console.log(result, '==============================================================');
-        
         if (result) {
           if (result.UserId === req.decode.id) {
             const { id, account, email, UserId, password } = result;
