@@ -28,12 +28,13 @@ class OtpController {
   }
 
   static async compareOtp(req, res, next) {
+    const { passId, otp } = req.body
     try {
-      const data = await redis.get("otpPass" + req.body.passId);
-      if (req.body.otp === data) {
-        const secret = await redis.get("password" + req.body.passId);
+      const savedOtp = await redis.get("otpPass" + passId);
+      if (otp === savedOtp) {
+        const secret = await redis.get("password" + passId);
         res.status(200).json({
-          msg: "succes, Otp matched",
+          msg: "success, Otp matched",
           secret
         });
       } else {

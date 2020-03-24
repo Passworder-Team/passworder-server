@@ -55,7 +55,32 @@ class PasswordController {
       })
       .catch(next);
   }
-
+  static readByLink(req, res, next) {
+    const link = req.params.account;
+    Password.findOne({
+      where: {
+        account: link,
+        UserId: req.decode.id
+      }
+    })
+      .then(password => {
+        if (password) {
+          const { id, account, email, UserId, password } = password;
+          res.status(200).json({
+            id,
+            account,
+            email,
+            password,
+            UserId
+          });
+        } else {
+          next({
+            name: "dataNotFound"
+          });
+        }
+      })
+      .catch(next);
+  }
   static readById(req, res, next) {
     const id = +req.params.id;
     Password.findByPk(id)
