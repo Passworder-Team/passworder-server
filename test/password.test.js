@@ -1,5 +1,3 @@
-/** @format */
-
 const request = require("supertest");
 const app = require("../app");
 const Sequelize = require("sequelize");
@@ -8,7 +6,8 @@ const { queryInterface } = sequelize;
 const { createToken } = require("../helpers/jwt");
 let UserId = 0;
 let PasswordId = 0;
-let testToken = "";
+let authorizedToken = "";
+let unauthorizedToken = ""
 
 describe("Password Routes", () => {
   describe("New Password input test", () => {
@@ -20,7 +19,7 @@ describe("Password Routes", () => {
       })
         .then(res => {
           UserId = res.id;
-          testToken = createToken(res.dataValues);
+          authorizedToken = createToken(res.dataValues);
           done();
         })
         .catch(done);
@@ -42,7 +41,7 @@ describe("Password Routes", () => {
     test("it should return new password object, token, and status 201", done => {
       request(app)
         .post("/passwords")
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .send({
           account: "Hacktiv8",
           email: "admin@admin.com",
@@ -65,7 +64,7 @@ describe("Password Routes", () => {
     test("it should return error 'Account can't be empty' and status 400", done => {
       request(app)
         .post("/passwords")
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .send({
           account: "",
           email: "admin@admin.com",
@@ -83,7 +82,7 @@ describe("Password Routes", () => {
     test("it should return error 'Email can't be empty' and status 400", done => {
       request(app)
         .post("/passwords")
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .send({
           account: "Hacktiv8",
           email: "",
@@ -101,7 +100,7 @@ describe("Password Routes", () => {
     test("it should return error 'Email format is wrong' and status 400", done => {
       request(app)
         .post("/passwords")
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .send({
           account: "Hacktiv8",
           email: "adminadmin.com",
@@ -119,7 +118,7 @@ describe("Password Routes", () => {
     test("it should return error 'Password min 6 characters' and status 400", done => {
       request(app)
         .post("/passwords")
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .send({
           account: "Hacktiv8",
           email: "admin@admin.com",
@@ -137,7 +136,7 @@ describe("Password Routes", () => {
     test("it should return error 'Password can't be empty' and status 400", done => {
       request(app)
         .post("/passwords")
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .send({
           account: "Hacktiv8",
           email: "admin@admin.com",
@@ -173,7 +172,7 @@ describe("Password Routes", () => {
       })
         .then(res => {
           UserId = res.id;
-          testToken = createToken(res.dataValues);
+          authorizedToken = createToken(res.dataValues);
           return Password.create({
             account: "Hacktiv8",
             email: "admin@admin.com",
@@ -197,7 +196,7 @@ describe("Password Routes", () => {
     test("it should return array of object password, with status 200", done => {
       request(app)
         .get("/passwords")
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
           expect(response.body[0]).toHaveProperty("account", "Hacktiv8");
@@ -215,7 +214,7 @@ describe("Password Routes", () => {
     test("it should return error 'Can't find Data', with status 404", done => {
       request(app)
         .get("/passwords")
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
           expect(response.body).toHaveProperty("msg", "Can't find Data");
@@ -235,16 +234,17 @@ describe("Password Routes", () => {
         });
     });
   });
-  describe("Get one Password test", () => {
+  describe.only("Get one Password test", () => {
     beforeAll(done => {
       User.create({
         name: "admin",
         email: "admin@admin.com",
         password: "admin123"
       })
-        .then(res => {
-          UserId = res.id;
-          testToken = createToken(res.dataValues);
+        .then(user => {
+          UserId = user.id;
+          console.log('UserId: ', UserId);
+          authorizedToken = createToken({ id: UserId });
           return Password.create({
             account: "Hacktiv8",
             email: "admin@admin.com",
@@ -254,6 +254,15 @@ describe("Password Routes", () => {
         })
         .then(password => {
           PasswordId = password.id;
+          return User.create({
+            name: "admin2",
+            email: "admin2@admin.com",
+            password: "admin123"
+          })
+        })
+        .then(user => {
+          const unauthorizedId = user.id
+          unauthorizedToken = createToken({ id: unauthorizedId });
           done();
         })
         .catch(done);
@@ -269,7 +278,7 @@ describe("Password Routes", () => {
     test("it should return object password, with status 200", done => {
       request(app)
         .get(`/passwords/${PasswordId}`)
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
           expect(response.body).toHaveProperty("account", "Hacktiv8");
@@ -285,13 +294,13 @@ describe("Password Routes", () => {
             .catch(err => done(err));
         });
     });
-    test("it should return error 'Can't find Data', with status 404", done => {
+    test("it should return error 'Password with id ${PasswordId} not found', with status 404", done => {
       request(app)
         .get(`/passwords/${PasswordId}`)
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "Can't find Data");
+          expect(response.body).toHaveProperty("msg", `Password with id ${PasswordId} not found`);
           expect(response.status).toBe(404);
           done();
         });
@@ -307,18 +316,15 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test.only("it should return error 'You not have authorization', with status 401", done => {
+    test("it should return error 'You not have authorization', with status 401", done => {
       request(app)
-        .get(`/passwords/${password.id}`)
-        .set("token", testToken)
+        .get(`/passwords/${PasswordId}`)
+        .set("token", unauthorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          console.log("===================================");
-          console.log(response.body);
-          console.log("===================================");
           expect(response.body).toHaveProperty(
             "msg",
-            "You not have authorization"
+            "You are not authorized"
           );
           expect(response.status).toBe(401);
           queryInterface
@@ -328,27 +334,6 @@ describe("Password Routes", () => {
             })
             .catch(err => done(err));
         });
-      // User.create({
-      //   name: "admin",
-      //   email: "admin2@admin.com",
-      //   password: "admin123"
-      // })
-      //   .then(res => {
-      //     console.log(res.id, '========================================================);')
-
-      //     const newId = res.id + 1;
-      //     testToken = createToken({id: newId});
-      //     return Password.create({
-      //       account: "Hacktiv8",
-      //       email: "admin2@admin.com",
-      //       password: "admin123",
-      //       UserId
-      //     });
-      //   })
-      //   .then(password => {
-
-      //   })
-      //   .catch(done);
     });
   });
   describe("Update Password test", () => {
@@ -360,7 +345,7 @@ describe("Password Routes", () => {
       })
         .then(res => {
           UserId = res.id;
-          testToken = createToken(res.dataValues);
+          authorizedToken = createToken(res.dataValues);
           return Password.create({
             account: "Hacktiv8",
             email: "admin@admin.com",
@@ -396,7 +381,7 @@ describe("Password Routes", () => {
           email: "admin5@admin.com",
           password: "admin23"
         })
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
           expect(response.body).toHaveProperty(
@@ -415,7 +400,7 @@ describe("Password Routes", () => {
           email: "admin5@admin.com",
           password: "admin23"
         })
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
           expect(response.body).toHaveProperty("msg", "Can't find Data");
@@ -426,7 +411,7 @@ describe("Password Routes", () => {
     test("it should return error validation 'Account can't be empty'", done => {
       request(app)
         .put(`/passwords/${PasswordId}`)
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .send({
           account: "",
           email: "admin5@admin.com",
@@ -442,7 +427,7 @@ describe("Password Routes", () => {
     test("it should return error validation 'Email can't be empty'", done => {
       request(app)
         .put(`/passwords/${PasswordId}`)
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .send({
           account: "Hacktiv",
           email: "",
@@ -458,7 +443,7 @@ describe("Password Routes", () => {
     test('it should return error validation "Email format is wrong"', done => {
       request(app)
         .put(`/passwords/${PasswordId}`)
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .send({
           account: "Hacktiv",
           email: "adminadmin.com",
@@ -474,7 +459,7 @@ describe("Password Routes", () => {
     test("it should return error validation 'Password can't be empty'", done => {
       request(app)
         .put(`/passwords/${PasswordId}`)
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .send({
           account: "Hacktiv",
           email: "admin5@admin.com",
@@ -490,7 +475,7 @@ describe("Password Routes", () => {
     test('it should return error validation "Password min 6 characters"', done => {
       request(app)
         .put(`/passwords/${PasswordId}`)
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .send({
           account: "Hacktiv",
           email: "admin5@admin.com",
@@ -511,7 +496,7 @@ describe("Password Routes", () => {
       })
         .then(res => {
           res.dataValues = res.id + 1;
-          testToken = createToken(res.dataValues);
+          authorizedToken = createToken(res.dataValues);
           return Password.create({
             account: "Hacktiv8",
             email: "admin2@admin.com",
@@ -522,7 +507,7 @@ describe("Password Routes", () => {
         .then(password => {
           request(app)
             .get(`/passwords/${password.id}`)
-            .set("token", testToken)
+            .set("token", authorizedToken)
             .end((err, response) => {
               expect(err).toBe(null);
               expect(response.body).toHaveProperty(
@@ -550,7 +535,7 @@ describe("Password Routes", () => {
       })
         .then(res => {
           UserId = res.id;
-          testToken = createToken(res.dataValues);
+          authorizedToken = createToken(res.dataValues);
           return Password.create({
             account: "Hacktiv8",
             email: "admin@admin.com",
@@ -575,7 +560,7 @@ describe("Password Routes", () => {
     test("it should return status 200", done => {
       request(app)
         .delete(`/passwords/${PasswordId}`)
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .end((err, response) => {
           // console.log(response.body);
           expect(err).toBe(null);
@@ -591,7 +576,7 @@ describe("Password Routes", () => {
     test("it should return error 'Can't find Data', with status 404", done => {
       request(app)
         .delete(`/passwords/${PasswordId}`)
-        .set("token", testToken)
+        .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
           expect(response.body).toHaveProperty("msg", "Can't find Data");
@@ -618,7 +603,7 @@ describe("Password Routes", () => {
       })
         .then(res => {
           res.dataValues = res.id + 1;
-          testToken = createToken(res.dataValues);
+          authorizedToken = createToken(res.dataValues);
           return Password.create({
             account: "Hacktiv8",
             email: "admin2@admin.com",
@@ -629,7 +614,7 @@ describe("Password Routes", () => {
         .then(password => {
           request(app)
             .get(`/passwords/${password.id}`)
-            .set("token", testToken)
+            .set("token", authorizedToken)
             .end((err, response) => {
               expect(err).toBe(null);
               expect(response.body).toHaveProperty(
