@@ -27,6 +27,7 @@ class PasswordController {
       })
       .catch(next);
   }
+
   static readAll(req, res, next) {
     const UserId = req.decode.id;
     Password.findAll({
@@ -107,6 +108,7 @@ class PasswordController {
       })
       .catch(next);
   }
+  
   static delete(req, res, next) {
     const id = +req.params.id;
     Password.destroy({
