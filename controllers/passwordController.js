@@ -1,8 +1,8 @@
 const { Password } = require("../models");
-const jwt = require('jsonwebtoken')
-const getRandomSecret = require('../helpers/getRandomSecret')
-const Redis = require('ioredis')
-const redis = new Redis()
+const jwt = require("jsonwebtoken");
+const getRandomSecret = require("../helpers/getRandomSecret");
+const Redis = require("ioredis");
+const redis = new Redis();
 
 class PasswordController {
   static addPassword(req, res, next) {
@@ -19,7 +19,8 @@ class PasswordController {
             id: password.id,
             account: password.account,
             email: password.email,
-            UserId: password.UserId
+            UserId: password.UserId,
+            password: password.password
           },
           msg: "Succesfuly input new password"
         };
@@ -60,9 +61,9 @@ class PasswordController {
     Password.findByPk(id)
       .then(password => {
         if (password) {
-          const { id, account, email, UserId } = password
-          const randomSecret = getRandomSecret()
-          redis.set('password' + id, randomSecret)
+          const { id, account, email, UserId } = password;
+          const randomSecret = getRandomSecret();
+          redis.set("password" + id, randomSecret);
           const encryptedPassword = jwt.sign(password.password, randomSecret);
           res.status(200).json({
             id,
@@ -70,7 +71,7 @@ class PasswordController {
             email,
             password: encryptedPassword,
             UserId
-          })
+          });
         } else {
           next({
             name: "dataNotFound"

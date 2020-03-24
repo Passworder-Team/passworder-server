@@ -569,7 +569,7 @@ describe("Password Routes", () => {
         })
         .catch(err => done(err));
     });
-    test("it should return status 200", done => {
+    test("it should return success delete with status 200", done => {
       request(app)
         .delete(`/passwords/${PasswordId}`)
         .set("token", testToken)
