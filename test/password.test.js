@@ -266,7 +266,7 @@ describe("Password Routes", () => {
         })
         .catch(err => done(err));
     });
-    test.only("it should return object password, with status 200", done => {
+    test("it should return object password, with status 200", done => {
       request(app)
         .get("/passwords/link/www.Hacktiv8.com")
         .set("token", testToken)
@@ -288,7 +288,7 @@ describe("Password Routes", () => {
     });
     test("it should return error 'Can't find Data', with status 404", done => {
       request(app)
-        .get(`/passwords/${PasswordId}`)
+        .get("/passwords/link/www.Facebook.com")
         .set("token", testToken)
         .end((err, response) => {
           expect(err).toBe(null);
@@ -308,48 +308,70 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test.only("it should return error 'You not have authorization', with status 401", done => {
-      request(app)
-        .get("/passwords/link/www.Hacktiv8.com")
-        .set("token", testToken)
-        .end((err, response) => {
-          expect(err).toBe(null);
-          console.log("===================================");
-          console.log(response.body);
-          console.log("===================================");
-          expect(response.body).toHaveProperty(
-            "msg",
-            "You not have authorization"
+    test("it should return error 'You not have authorization', with status 401", done => {
+      // request(app)
+      //   .get("/passwords/link/www.Hacktiv8.com")
+      //   .set("token", testToken)
+      //   .end((err, response) => {
+      //     expect(err).toBe(null);
+      //     console.log("===================================");
+      //     console.log(response.body);
+      //     console.log("===================================");
+      //     expect(response.body).toHaveProperty(
+      //       "msg",
+      //       "You not have authorization"
+      //     );
+      //     expect(response.status).toBe(401);
+      //     queryInterface
+      //       .bulkDelete("Passwords", {})
+      //       .then(response => {
+      //         done();
+      //       })
+      //       .catch(err => done(err));
+      //   });
+      User.create({
+        name: "admin",
+        email: "admin2@admin.com",
+        password: "admin123"
+      })
+        .then(res => {
+          console.log(
+            res.id,
+            "========================================================);"
           );
-          expect(response.status).toBe(401);
-          queryInterface
-            .bulkDelete("Passwords", {})
-            .then(response => {
-              done();
-            })
-            .catch(err => done(err));
-        });
-      // User.create({
-      //   name: "admin",
-      //   email: "admin2@admin.com",
-      //   password: "admin123"
-      // })
-      //   .then(res => {
-      //     console.log(res.id, '========================================================);')
 
-      //     const newId = res.id + 1;
-      //     testToken = createToken({id: newId});
-      //     return Password.create({
-      //       account: "Hacktiv8",
-      //       email: "admin2@admin.com",
-      //       password: "admin123",
-      //       UserId
-      //     });
-      //   })
-      //   .then(password => {
-
-      //   })
-      //   .catch(done);
+          const newId = res.id + 1;
+          testToken = createToken({ id: newId });
+          return Password.create({
+            account: "Hacktiv8",
+            email: "admin2@admin.com",
+            password: "admin123",
+            UserId
+          });
+        })
+        .then(password => {
+          request(app)
+            .get("/passwords/link/www.Hacktiv8.com")
+            .set("token", testToken)
+            .end((err, response) => {
+              expect(err).toBe(null);
+              console.log("===================================");
+              console.log(response.body);
+              console.log("===================================");
+              expect(response.body).toHaveProperty(
+                "msg",
+                "You not have authorization"
+              );
+              expect(response.status).toBe(401);
+              queryInterface
+                .bulkDelete("Passwords", {})
+                .then(response => {
+                  done();
+                })
+                .catch(err => done(err));
+            });
+        })
+        .catch(done);
     });
   });
   describe("Get one Password by id test", () => {
@@ -425,47 +447,69 @@ describe("Password Routes", () => {
         });
     });
     test("it should return error 'You not have authorization', with status 401", done => {
-      request(app)
-        .get(`/passwords/${Password.id}`)
-        .set("token", testToken)
-        .end((err, response) => {
-          expect(err).toBe(null);
-          console.log("===================================");
-          console.log(response.body);
-          console.log("===================================");
-          expect(response.body).toHaveProperty(
-            "msg",
-            "You not have authorization"
+      // request(app)
+      //   .get(`/passwords/${Password.id}`)
+      //   .set("token", testToken)
+      //   .end((err, response) => {
+      //     expect(err).toBe(null);
+      //     console.log("===================================");
+      //     console.log(response.body);
+      //     console.log("===================================");
+      //     expect(response.body).toHaveProperty(
+      //       "msg",
+      //       "You not have authorization"
+      //     );
+      //     expect(response.status).toBe(401);
+      //     queryInterface
+      //       .bulkDelete("Passwords", {})
+      //       .then(response => {
+      //         done();
+      //       })
+      //       .catch(err => done(err));
+      //   });
+      User.create({
+        name: "admin",
+        email: "admin2@admin.com",
+        password: "admin123"
+      })
+        .then(res => {
+          console.log(
+            res.id,
+            "========================================================);"
           );
-          expect(response.status).toBe(401);
-          queryInterface
-            .bulkDelete("Passwords", {})
-            .then(response => {
-              done();
-            })
-            .catch(err => done(err));
-        });
-      // User.create({
-      //   name: "admin",
-      //   email: "admin2@admin.com",
-      //   password: "admin123"
-      // })
-      //   .then(res => {
-      //     console.log(res.id, '========================================================);')
 
-      //     const newId = res.id + 1;
-      //     testToken = createToken({id: newId});
-      //     return Password.create({
-      //       account: "Hacktiv8",
-      //       email: "admin2@admin.com",
-      //       password: "admin123",
-      //       UserId
-      //     });
-      //   })
-      //   .then(password => {
-
-      //   })
-      //   .catch(done);
+          const newId = res.id + 1;
+          testToken = createToken({ id: newId });
+          return Password.create({
+            account: "Hacktiv8",
+            email: "admin2@admin.com",
+            password: "admin123",
+            UserId
+          });
+        })
+        .then(password => {
+          request(app)
+            .get(`/passwords/${Password.id}`)
+            .set("token", testToken)
+            .end((err, response) => {
+              expect(err).toBe(null);
+              console.log("===================================");
+              console.log(response.body);
+              console.log("===================================");
+              expect(response.body).toHaveProperty(
+                "msg",
+                "You not have authorization"
+              );
+              expect(response.status).toBe(401);
+              queryInterface
+                .bulkDelete("Passwords", {})
+                .then(response => {
+                  done();
+                })
+                .catch(err => done(err));
+            });
+        })
+        .catch(done);
     });
   });
   describe("Update Password test", () => {

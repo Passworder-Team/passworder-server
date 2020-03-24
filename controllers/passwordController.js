@@ -59,20 +59,27 @@ class PasswordController {
     const link = req.params.account;
     Password.findOne({
       where: {
-        account: link,
-        UserId: req.decode.id
+        account: link
       }
     })
-      .then(password => {
-        if (password) {
-          const { id, account, email, UserId, password } = password;
-          res.status(200).json({
-            id,
-            account,
-            email,
-            password,
-            UserId
-          });
+      .then(result => {
+        if (result) {
+          if (result.UserId === req.decode.id) {
+            const { id, account, email, UserId, password } = result;
+            res.status(200).json({
+              id,
+              account,
+              email,
+              password,
+              UserId
+            });
+          } else {
+            const err = {
+              name: "NotAuthorized",
+              message: "You not have authorization"
+            };
+            throw err;
+          }
         } else {
           next({
             name: "dataNotFound"
