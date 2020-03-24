@@ -22,6 +22,10 @@ module.exports = (err, req, res, next) => {
     res.status(404).json({
       msg: "Can't find Data"
     });
+  } else if (error.name === "passNotFound") {
+    res.status(404).json({
+      msg: error.msg
+    });
   } else if (error.name === "NotAuthorized") {
     res.status(401).json({
       msg: error.message
@@ -30,11 +34,14 @@ module.exports = (err, req, res, next) => {
     res.status(500).json({
       msg: "Internal Server Error"
     });
-  } else if (error.name === "JsonWebTokenError") {
+  } else if (
+    error.name === "JsonWebTokenError" ||
+    error.name === "userNotFound"
+  ) {
     res.status(401).json({
       msg: "You must login first"
     });
-  } else if(error.name === "wrongOtp") {
+  } else if (error.name === "wrongOtp") {
     res.status(400).json({
       msg: error.message
     });

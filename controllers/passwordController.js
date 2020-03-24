@@ -109,29 +109,11 @@ class PasswordController {
   }
   static delete(req, res, next) {
     const id = +req.params.id;
-    Password.findByPk(id)
-      .then(password => {
-        if (password) {
-          if (password.UserId === req.decode.id) {
-            return Password.destroy({
-              where: {
-                id
-              }
-            });
-          } else {
-            const err = {
-              name: "NotAuthorized",
-              message: "You not have authorization"
-            };
-            throw err;
-          }
-        } else {
-          const err = {
-            name: "dataNotFound"
-          };
-          throw err;
-        }
-      })
+    Password.destroy({
+      where: {
+        id
+      }
+    })
       .then(password => {
         if (password === 0) {
           const err = {

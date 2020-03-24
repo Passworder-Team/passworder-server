@@ -19,7 +19,7 @@ class OtpController {
         console.log("otpPass" + passId, "deleted");
       }, 300000);
       res.status(200).json({
-        msg: "Send OTP success. Please check Your phone and input otp number.",
+        msg: `Send OTP to ${phoneNumber} success. Please check Your phone and input otp number.`,
         result: "MessageID is " + result.MessageId
       });
     } catch (err) {
