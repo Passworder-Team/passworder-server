@@ -4,7 +4,10 @@
   "description": "Server side of passworder app",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit --coverage --verbose --colors --silent",
+    "dbTest": "NODE_ENV=test sequelize db:create && sequelize db:migrate",
+    "dbDev": "NODE_ENV=development sequelize db:create && sequelize db:migrate",
+    "test": "NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit",
+    "test1": "NODE_ENV=test jest --runInBand --detectOpenHandles --coverage --forceExit",
     "dev": "NODE_ENV=development nodemon ./bin/http.js"
   },
   "repository": {
