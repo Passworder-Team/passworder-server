@@ -1,26 +1,26 @@
-const { User } = require("../models");
+const { Password } = require("../models");
 
 module.exports = {
-  check(req, res, next) {
-    const id = req.decode.id;
-    User.findByPk(id)
-      .then(User => {
-        if (User) {
-          next();
-        } else {
-          const err = {
-            name: "NotAuthorized",
-            message: "You not have authorization"
-          };
-          next(err);
-        }
-      })
-      .catch(err => {
-        const error = {
+  authorization: async (req, res, next) => {
+    const userId = req.decode.id;
+    const passId = req.params.id
+    try {
+      const password = await Password.findByPk(passId)
+      if (password) {
+        if (userId === password.UserId) next()
+        else next({
           name: "NotAuthorized",
-          message: "You not have authorization"
-        };
-        next(error);
-      });
+          message: "You are not authorized"
+        })
+      } else {
+        next({
+          name: 'passNotFound',
+          msg: `Password with id ${passId} not found`
+        })
+      }
+      
+    } catch (err) {
+      next(err)
+    }
   }
 };
