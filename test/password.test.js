@@ -424,13 +424,16 @@ describe("Password Routes", () => {
             .catch(err => done(err));
         });
     });
-    test("it should return error 'Can't find Data', with status 404", done => {
+    test("it should return error 'Password with id ... not found', with status 404", done => {
       request(app)
         .get(`/passwords/${PasswordId}`)
         .set("token", testToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "Can't find Data");
+          expect(response.body).toHaveProperty(
+            "msg",
+            `Password with id ${PasswordId} not found`
+          );
           expect(response.status).toBe(404);
           done();
         });
@@ -447,69 +450,69 @@ describe("Password Routes", () => {
         });
     });
     test("it should return error 'You not have authorization', with status 401", done => {
-      // request(app)
-      //   .get(`/passwords/${Password.id}`)
-      //   .set("token", testToken)
-      //   .end((err, response) => {
-      //     expect(err).toBe(null);
-      //     console.log("===================================");
-      //     console.log(response.body);
-      //     console.log("===================================");
-      //     expect(response.body).toHaveProperty(
-      //       "msg",
-      //       "You not have authorization"
-      //     );
-      //     expect(response.status).toBe(401);
-      //     queryInterface
-      //       .bulkDelete("Passwords", {})
-      //       .then(response => {
-      //         done();
-      //       })
-      //       .catch(err => done(err));
-      //   });
-      User.create({
-        name: "admin",
-        email: "admin2@admin.com",
-        password: "admin123"
-      })
-        .then(res => {
-          console.log(
-            res.id,
-            "========================================================);"
+      request(app)
+        .get(`/passwords/${Password.id}`)
+        .set("token", testToken)
+        .end((err, response) => {
+          expect(err).toBe(null);
+          console.log("===================================");
+          console.log(response.body);
+          console.log("===================================");
+          expect(response.body).toHaveProperty(
+            "msg",
+            "You not have authorization"
           );
+          expect(response.status).toBe(401);
+          queryInterface
+            .bulkDelete("Passwords", {})
+            .then(response => {
+              done();
+            })
+            .catch(err => done(err));
+        });
+      // User.create({
+      //   name: "admin",
+      //   email: "admin2@admin.com",
+      //   password: "admin123"
+      // })
+      //   .then(res => {
+      //     console.log(
+      //       res.id,
+      //       "========================================================);"
+      //     );
 
-          const newId = res.id + 1;
-          testToken = createToken({ id: newId });
-          return Password.create({
-            account: "Hacktiv8",
-            email: "admin2@admin.com",
-            password: "admin123",
-            UserId
-          });
-        })
-        .then(password => {
-          request(app)
-            .get(`/passwords/${Password.id}`)
-            .set("token", testToken)
-            .end((err, response) => {
-              expect(err).toBe(null);
-              console.log("===================================");
-              console.log(response.body);
-              console.log("===================================");
-              expect(response.body).toHaveProperty(
-                "msg",
-                "You not have authorization"
-              );
-              expect(response.status).toBe(401);
-              queryInterface
-                .bulkDelete("Passwords", {})
-                .then(response => {
-                  done();
-                })
-                .catch(err => done(err));
-            });
-        })
-        .catch(done);
+      //     const newId = res.id + 1;
+      //     testToken = createToken({ id: newId });
+      //     return Password.create({
+      //       account: "Hacktiv8",
+      //       email: "admin2@admin.com",
+      //       password: "admin123",
+      //       UserId
+      //     });
+      //   })
+      //   .then(password => {
+      //     request(app)
+      //       .get(`/passwords/${Password.id}`)
+      //       .set("token", testToken)
+      //       .end((err, response) => {
+      //         expect(err).toBe(null);
+      //         console.log("===================================");
+      //         console.log(response.body);
+      //         console.log("===================================");
+      //         expect(response.body).toHaveProperty(
+      //           "msg",
+      //           "You not have authorization"
+      //         );
+      //         expect(response.status).toBe(401);
+      //         queryInterface
+      //           .bulkDelete("Passwords", {})
+      //           .then(response => {
+      //             done();
+      //           })
+      //           .catch(err => done(err));
+      //       });
+      //   })
+      //   .catch(done);
     });
   });
   describe("Update Password test", () => {
@@ -568,7 +571,7 @@ describe("Password Routes", () => {
           done();
         });
     });
-    test("it should return error 'Can't find data'", done => {
+    test("it should return error 'Password with id ... not found'", done => {
       request(app)
         .put(`/passwords/${PasswordId + 1}`)
         .send({
@@ -579,7 +582,10 @@ describe("Password Routes", () => {
         .set("token", testToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "Can't find Data");
+          expect(response.body).toHaveProperty(
+            "msg",
+            `Password with id ${PasswordId + 1} not found`
+          );
           expect(response.status).toBe(404);
           done();
         });
@@ -749,13 +755,16 @@ describe("Password Routes", () => {
             .catch(err => done(err));
         });
     });
-    test("it should return error 'Can't find Data', with status 404", done => {
+    test("it should return error 'Password with id ... not found', with status 404", done => {
       request(app)
         .delete(`/passwords/${PasswordId}`)
         .set("token", testToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("msg", "Can't find Data");
+          expect(response.body).toHaveProperty(
+            "msg",
+            `Password with id ${PasswordId} not found`
+          );
           expect(response.status).toBe(404);
           done();
         });
