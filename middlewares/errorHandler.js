@@ -9,10 +9,10 @@ module.exports = (err, req, res, next) => {
     res.status(400).json({
       msg: messages
     });
-  } else if (error.name === "transactionError") {
-    res.status(400).json({
-      msg: error.message
-    });
+    // } else if (error.name === "transactionError") {
+    //   res.status(400).json({
+    //     msg: error.message
+    //   });
   } else if (error.name === "invalid email/password") {
     res.status(400).json({
       name: error.name,
@@ -53,7 +53,7 @@ module.exports = (err, req, res, next) => {
       msg: "Phone number is required. Please add your phone number to your account"
     });
   } else {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({
       msg: "Internal Server Error"
     });
