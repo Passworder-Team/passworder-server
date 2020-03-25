@@ -1,11 +1,13 @@
 {
   "development": {
-    "username": "postgres",
-    "password": "postgres",
+    "username": "mantap",
+    "password": "mantap",
     "database": "Passworder",
     "host": "localhost",
     "dialect": "postgres",
-    "operatorsAliases": 0
+    "operatorsAliases": 0,
+    "logging": false
+
   },
   "test": {
     "username": "postgres",
@@ -17,6 +19,12 @@
     "logging": false
   },
   "production": {
-    "use_env_variable": "DATABASE_URL"
+    "username": "mantap",
+    "password": "mantap",
+    "database": "Passworder",
+    "host": "localhost",
+    "dialect": "postgres",
+    "operatorsAliases": 0,
+    "logging": false
   }
 }

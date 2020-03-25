@@ -9,7 +9,8 @@
     "test": "NODE_ENV=test jest --runInBand --detectOpenHandles --forceExit",
     "test1": "NODE_ENV=test jest --runInBand --detectOpenHandles --coverage --forceExit",
     "test2": "NODE_ENV=test jest --runInBand --detectOpenHandles --verbose --forceExit",
-    "dev": "NODE_ENV=development nodemon ./bin/http.js"
+    "dev": "NODE_ENV=development nodemon ./bin/http.js",
+    "start": "NODE_ENV=production node ./bin/http.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,7 @@
     "ioredis": "^4.16.0",
     "jest": "^25.1.0",
     "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
     "pg": "^7.18.2",
     "sequelize": "^5.21.5",
     "supertest": "^4.0.2"
