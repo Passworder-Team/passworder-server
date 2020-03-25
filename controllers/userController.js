@@ -36,6 +36,10 @@ class UserController {
       }
     })
       .then(user => {
+        const error = {
+          name: "invalid email/password",
+          message: "email / password is wrong"
+        };
         if (user) {
           const check = comparePassword(req.body.password, user.password);
           if (check) {
@@ -53,20 +57,8 @@ class UserController {
               token,
               msg: "Login success"
             });
-          } else {
-            const error = {
-              name: "invalid email/password",
-              message: "email / password is wrong"
-            };
-            next(error);
-          }
-        } else {
-          const error = {
-            name: "invalid email/password",
-            message: "email / password is wrong"
-          };
-          next(error);
-        }
+          } else throw error;
+        } else next(error);
       })
       .catch(next);
   }
