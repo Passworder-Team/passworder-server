@@ -9,10 +9,10 @@ module.exports = (err, req, res, next) => {
     res.status(400).json({
       msg: messages
     });
-  } else if (error.name === "transactionError") {
-    res.status(400).json({
-      msg: error.message
-    });
+    // } else if (error.name === "transactionError") {
+    //   res.status(400).json({
+    //     msg: error.message
+    //   });
   } else if (error.name === "invalid email/password") {
     res.status(400).json({
       name: error.name,
@@ -30,10 +30,10 @@ module.exports = (err, req, res, next) => {
     res.status(401).json({
       msg: error.message
     });
-  } else if (error.name === "SequelizeDatabaseError") {
-    res.status(500).json({
-      msg: "Internal Server Error"
-    });
+    // } else if (error.name === "SequelizeDatabaseError") {
+    //   res.status(500).json({
+    //     msg: "Internal Server Error"
+    //   });
   } else if (
     error.name === "JsonWebTokenError" ||
     error.name === "userNotFound"
@@ -46,7 +46,7 @@ module.exports = (err, req, res, next) => {
       msg: error.message
     });
   } else {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({
       msg: "Internal Server Error"
     });

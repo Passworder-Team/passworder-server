@@ -22,11 +22,7 @@ module.exports = (sequelize, DataTypes) => {
               }
             })
               .then(costumer => {
-                if (costumer) {
-                  next("username is already used");
-                } else {
-                  next();
-                }
+                costumer ? next("username is already used") : next();
               })
               .catch(next);
           }

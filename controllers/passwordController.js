@@ -128,16 +128,13 @@ class PasswordController {
       }
     })
       .then(password => {
-        if (password[0] === 0) {
-          const err = {
-            name: "dataNotFound"
-          };
-          next(err);
-        } else {
-          res.status(200).json({
-            msg: "Update password success"
-          });
-        }
+        password[0] === 0
+          ? next({
+              name: "dataNotFound"
+            })
+          : res.status(200).json({
+              msg: "Update password success"
+            });
       })
       .catch(next);
   }
@@ -150,16 +147,13 @@ class PasswordController {
       }
     })
       .then(password => {
-        if (password === 0) {
-          const err = {
-            name: "dataNotFound"
-          };
-          next(err);
-        } else {
-          res.status(200).json({
-            msg: "Delete password success"
-          });
-        }
+        password === 0
+          ? next({
+              name: "dataNotFound"
+            })
+          : res.status(200).json({
+              msg: "Delete password success"
+            });
       })
       .catch(next);
   }
