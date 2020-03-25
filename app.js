@@ -1,11 +1,12 @@
-// process.env.NODE_ENV !== "production" && require("dotenv").config())
+const production = process.env.NODE_ENV === "production"
+!production && require("dotenv").config()
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const routes = require("./routes");
 const morgan = require('morgan')
 
-app.use(morgan('tiny'))
+production && app.use(morgan('tiny'))
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());

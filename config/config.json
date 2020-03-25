@@ -1,7 +1,7 @@
 {
   "development": {
-    "username": "mantap",
-    "password": "mantap",
+    "username": "postgres",
+    "password": "postgres",
     "database": "Passworder",
     "host": "localhost",
     "dialect": "postgres",
