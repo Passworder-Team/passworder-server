@@ -4,7 +4,7 @@ const { authorization } = require("../middlewares/authorization");
 
 router.post("/", PasswordController.addPassword);
 router.get("/", PasswordController.readAll);
-router.get("/link/:account", PasswordController.readByLink);
+router.get("/link", PasswordController.readByLink);
 router.use("/:id", authorization);
 router.get("/:id", PasswordController.readById);
 router.put("/:id", PasswordController.update);

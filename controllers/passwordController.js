@@ -57,35 +57,18 @@ class PasswordController {
       .catch(next);
   }
   static readByLink(req, res, next) {
-    const link = req.params.account;
-    Password.findOne({
+    const UserId = req.decode.id;
+    Password.findAll({
       where: {
-        account: link
+        UserId
       }
     })
-      .then(result => {
-        if (result) {
-          if (result.UserId === req.decode.id) {
-            const { id, account, email, UserId, password } = result;
-            res.status(200).json({
-              id,
-              account,
-              email,
-              password,
-              UserId
+      .then(passwords => {
+        passwords.length
+          ? res.status(200).json(passwords)
+          : next({
+              name: "dataNotFound"
             });
-          } else {
-            const err = {
-              name: "NotAuthorized",
-              message: "You are not authorized"
-            };
-            throw err;
-          }
-        } else {
-          next({
-            name: "dataNotFound"
-          });
-        }
       })
       .catch(next);
   }
