@@ -7,7 +7,7 @@ const { createToken } = require("../helpers/jwt");
 let UserId = 0;
 let PasswordId = 0;
 let authorizedToken = "";
-let unauthorizedToken = ""
+let unauthorizedToken = "";
 
 describe("Password Routes", () => {
   describe("New Password input test", () => {
@@ -234,34 +234,24 @@ describe("Password Routes", () => {
         });
     });
   });
-  describe("Get one Password by link test", () => {
+  describe("Get Password by link test", () => {
     beforeAll(done => {
       User.create({
         name: "admin",
-        email: "admin@admin.com",
+        email: "admin3@admin.com",
         password: "admin123"
       })
-        .then(user => {
-          UserId = user.id;
-          authorizedToken = createToken({ id: UserId });
+        .then(res => {
+          UserId = res.id;
+          authorizedToken = createToken(res.dataValues);
           return Password.create({
-            account: "www.Hacktiv8.com",
+            account: "Hacktiv8",
             email: "admin@admin.com",
             password: "admin123",
             UserId
           });
         })
         .then(password => {
-          PasswordId = password.id;
-          return User.create({
-            name: "admin2",
-            email: "admin2@admin.com",
-            password: "admin123"
-          })
-        })
-        .then(user => {
-          const unauthorizedId = user.id
-          unauthorizedToken = createToken({ id: unauthorizedId });
           done();
         })
         .catch(done);
@@ -274,23 +264,28 @@ describe("Password Routes", () => {
         })
         .catch(err => done(err));
     });
-    test("it should return object password, with status 200", done => {
+    test("it should return array of object password, with status 200", done => {
       request(app)
-        .get("/passwords/link/www.Hacktiv8.com")
+        .get("/passwords")
         .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty("account", "www.Hacktiv8.com");
-          expect(response.body).toHaveProperty("email", "admin@admin.com");
-          expect(response.body).toHaveProperty("password", expect.any(String));
-          expect(response.body).toHaveProperty("UserId", UserId);
+          expect(response.body[0]).toHaveProperty("account", "Hacktiv8");
+          expect(response.body[0]).toHaveProperty("email", "admin@admin.com");
+          expect(response.body[0]).toHaveProperty("password", "admin123");
+          expect(response.body[0]).toHaveProperty("UserId", UserId);
           expect(response.status).toBe(200);
-          done()
+          queryInterface
+            .bulkDelete("Passwords", {})
+            .then(response => {
+              done();
+            })
+            .catch(err => done(err));
         });
     });
     test("it should return error 'Can't find Data', with status 404", done => {
       request(app)
-        .get("/passwords/link/www.Facebook.com")
+        .get("/passwords")
         .set("token", authorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
@@ -301,27 +296,13 @@ describe("Password Routes", () => {
     });
     test("it should return error 'You must login first', with status 401", done => {
       request(app)
-        .get("/passwords/link/www.Hacktiv8.com")
+        .get("/passwords")
         .set("token", "")
         .end((err, response) => {
           expect(err).toBe(null);
           expect(response.body).toHaveProperty("msg", "You must login first");
           expect(response.status).toBe(401);
           done();
-        });
-    });
-    test("it should return error 'You are not authorized', with status 401", done => {
-      request(app)
-        .get("/passwords/link/www.Hacktiv8.com")
-        .set("token", unauthorizedToken)
-        .end((err, response) => {
-          expect(err).toBe(null);
-          expect(response.body).toHaveProperty(
-            "msg",
-            "You are not authorized"
-          );
-          expect(response.status).toBe(401);
-          done()
         });
     });
   });
@@ -348,10 +329,10 @@ describe("Password Routes", () => {
             name: "admin2",
             email: "admin2@admin.com",
             password: "admin123"
-          })
+          });
         })
         .then(user => {
-          const unauthorizedId = user.id
+          const unauthorizedId = user.id;
           unauthorizedToken = createToken({ id: unauthorizedId });
           done();
         })
@@ -376,7 +357,7 @@ describe("Password Routes", () => {
           expect(response.body).toHaveProperty("password", expect.any(String));
           expect(response.body).toHaveProperty("UserId", UserId);
           expect(response.status).toBe(200);
-          done()
+          done();
         });
     });
     test("it should return error 'Password with id ... not found', with status 404", done => {
@@ -410,12 +391,9 @@ describe("Password Routes", () => {
         .set("token", unauthorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty(
-            "msg",
-            "You are not authorized"
-          );
+          expect(response.body).toHaveProperty("msg", "You are not authorized");
           expect(response.status).toBe(401);
-          done()
+          done();
         });
     });
   });
@@ -442,10 +420,10 @@ describe("Password Routes", () => {
             name: "admin2",
             email: "admin2@admin.com",
             password: "admin123"
-          })
+          });
         })
         .then(user => {
-          const unauthorizedId = user.id
+          const unauthorizedId = user.id;
           unauthorizedToken = createToken({ id: unauthorizedId });
           done();
         })
@@ -594,12 +572,9 @@ describe("Password Routes", () => {
         })
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty(
-            "msg",
-            "You are not authorized"
-          );
+          expect(response.body).toHaveProperty("msg", "You are not authorized");
           expect(response.status).toBe(401);
-          done()
+          done();
         });
     });
   });
@@ -626,10 +601,10 @@ describe("Password Routes", () => {
             name: "admin2",
             email: "admin2@admin.com",
             password: "admin123"
-          })
+          });
         })
         .then(user => {
-          const unauthorizedId = user.id
+          const unauthorizedId = user.id;
           unauthorizedToken = createToken({ id: unauthorizedId });
           done();
         })
@@ -651,7 +626,7 @@ describe("Password Routes", () => {
           // console.log(response.body);
           expect(err).toBe(null);
           expect(response.status).toBe(200);
-          done()
+          done();
         });
     });
     test("it should return error 'Password with id ... not found', with status 404", done => {
@@ -685,12 +660,9 @@ describe("Password Routes", () => {
         .set("token", unauthorizedToken)
         .end((err, response) => {
           expect(err).toBe(null);
-          expect(response.body).toHaveProperty(
-            "msg",
-            "You are not authorized"
-          );
+          expect(response.body).toHaveProperty("msg", "You are not authorized");
           expect(response.status).toBe(401);
-          done()
+          done();
         });
     });
   });
