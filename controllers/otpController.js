@@ -13,7 +13,7 @@ class OtpController {
       const { phoneNumber } = await User.findByPk(id);
       const result = await sendOtp(otp, phoneNumber);
       redis.set("otpPass" + passId, otp);
-      console.log("MessageID is " + result.MessageId);
+      // console.log("MessageID is " + result.MessageId);
       setTimeout(() => {
         redis.del("otpPass" + passId);
         console.log("otpPass" + passId, "deleted");
@@ -34,7 +34,7 @@ class OtpController {
       if (otp === savedOtp) {
         const secret = await redis.get("password" + passId);
         res.status(200).json({
-          msg: "success, Otp matched",
+          msg: "Success, Otp matched",
           secret
         });
       } else {
